@@ -1,0 +1,26 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="All Tests" type="ScalaTestRunConfiguration" factoryName="ScalaTest">
+    <module name="pushcala" />
+    <setting name="path" value="" />
+    <setting name="vmparams" value="" />
+    <setting name="params" value="" />
+    <setting name="workingDirectory" value="file://$PROJECT_DIR$" />
+    <setting name="searchForTest" value="Across module dependencies" />
+    <setting name="showProgressMessages" value="true" />
+    <setting name="useSbt" value="true" />
+    <setting name="useUiWithSbt" value="true" />
+    <setting name="jrePath" value="" />
+    <envs />
+    <setting name="testKind" value="All in package" />
+    <setting name="package" value="" />
+    <buffered bufClass="pushcala.InstructionTest" />
+    <buffered bufClass="pushcala.InstructionTest" />
+    <buffered bufClass="pushcala.PushInterpreterStateTest" />
+    <buffered bufClass="pushcala.PushInterpreterStateTest" />
+    <buffered bufClass="pushcala.PushParserTest" />
+    <buffered bufClass="pushcala.PushParserTest" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
