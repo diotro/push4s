@@ -9,6 +9,7 @@ object PushParser {
     */
   def parse(program: String): Option[PushProgram] = {
     // replace each paren with a " ( ", so we can split on spaces to get each atom out
+    // This is pretty gross, but it's such a simple language it just might work.
     val atoms = program
       .replaceAllLiterally("(", " ( ")
       .replaceAllLiterally(")", " ) ")
@@ -20,7 +21,6 @@ object PushParser {
   }
 
   private def parseAtoms(atoms: List[String]): Option[PushProgram] = {
-    println(s"atoms = ${atoms}")
     atoms match {
       case atom :: rest => atom match {
           // case 1: there is a left paren, so we have to parse a list right now
@@ -51,7 +51,6 @@ object PushParser {
           // atoms, assuming all are parseable
         case _ => (parseAtom(atom), parseAtoms(rest)) match {
           case (Some(parsedAtom), Some(parsedRestAtoms)) =>
-            println(parsedAtom, parsedRestAtoms, parsedAtom +: parsedRestAtoms)
             Some(parsedAtom +: parsedRestAtoms)
           case _ => None
         }

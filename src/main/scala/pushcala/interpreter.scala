@@ -5,10 +5,34 @@ case class PushInterpreter(state: PushInterpreterState) {
   /**
     * @return This interpreter, after one additional step
     */
-  def step(): PushInterpreter = this
+  def step(): PushInterpreter = {
+    val (nextInstruction, newState) = this.state.popExec()
+    val nextState = nextInstruction match {
+      case Some(atom: PushAtom) => processAtom(newState, atom)
+      case None => newState
+    }
+    PushInterpreter(nextState)
+  }
+
+  private def processAtom(state: PushInterpreterState, atom: PushAtom): PushInterpreterState = {
+    atom match {
+      case PushList(atoms) => atoms.foldLeft(state)(processAtom)
+      case LiteralBoolean(b) => state.pushBoolean(b)
+      case LiteralInt(i) => state.pushInt(i)
+      case LiteralFloat(f) => state.pushFloat(f)
+      case LiteralString(s) => state.pushString(s)
+      case i: Instruction => Instructions.getDef(i)(state)
+    }
+  }
 
   /** @return The state after running from the given state until the exec stack is empty. */
-  def run(): PushInterpreterState = this.state
+  def run(): PushInterpreterState = {
+    if (this.state.exec.contents.isEmpty) {
+      this.state
+    } else {
+      this.step().run()
+    }
+  }
 }
 
 object PushInterpreter {

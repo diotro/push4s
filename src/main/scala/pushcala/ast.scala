@@ -12,7 +12,7 @@ case class LiteralString(value: String) extends Literal[String]
 case class LiteralBoolean(value: Boolean) extends Literal[Boolean]
 
 
-class Instruction (private val name: String) extends PushAtom {
+case class Instruction (name: String) extends PushAtom {
   override def hashCode(): Int = {
     this.name.hashCode()
   }
@@ -36,6 +36,9 @@ object Instruction {
   def exists(name: String): Boolean = {
     Instructions.containsDefinitionFor(name)
   }
+
+  // Hide apply constructor
+  private def apply(): Unit = {}
 }
 
 case class PushList(contents: PushProgram) extends PushAtom

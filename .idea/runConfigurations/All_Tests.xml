@@ -15,10 +15,10 @@
     <setting name="package" value="" />
     <buffered bufClass="pushcala.InstructionTest" />
     <buffered bufClass="pushcala.InstructionTest" />
-    <buffered bufClass="pushcala.PushInterpeterTest" />
-    <buffered bufClass="pushcala.PushInterpeterTest" />
     <buffered bufClass="pushcala.PushInterpreterStateTest" />
     <buffered bufClass="pushcala.PushInterpreterStateTest" />
+    <buffered bufClass="pushcala.PushInterpreterTest" />
+    <buffered bufClass="pushcala.PushInterpreterTest" />
     <buffered bufClass="pushcala.PushParserTest" />
     <buffered bufClass="pushcala.PushParserTest" />
     <buffered bufClass="pushcala.PushStackTest" />
