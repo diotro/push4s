@@ -15,10 +15,14 @@
     <setting name="package" value="" />
     <buffered bufClass="pushcala.InstructionTest" />
     <buffered bufClass="pushcala.InstructionTest" />
+    <buffered bufClass="pushcala.PushInterpeterTest" />
+    <buffered bufClass="pushcala.PushInterpeterTest" />
     <buffered bufClass="pushcala.PushInterpreterStateTest" />
     <buffered bufClass="pushcala.PushInterpreterStateTest" />
     <buffered bufClass="pushcala.PushParserTest" />
     <buffered bufClass="pushcala.PushParserTest" />
+    <buffered bufClass="pushcala.PushStackTest" />
+    <buffered bufClass="pushcala.PushStackTest" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

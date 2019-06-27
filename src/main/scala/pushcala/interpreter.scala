@@ -1,16 +1,49 @@
 package pushcala
 
 
-case class Interpreter(state: PushInterpreterState) {
+case class PushInterpreter(state: PushInterpreterState) {
   /**
     * @return This interpreter, after one additional step
     */
-  def step(): Interpreter = ???
+  def step(): PushInterpreter = this
 
   /** @return The state after running from the given state until the exec stack is empty. */
-  def run(): PushInterpreterState = ???
+  def run(): PushInterpreterState = this.state
 }
 
+object PushInterpreter {
+  /**
+    * Creates a Push Interpreter, with starting state equal to just
+    * the given program.
+    *
+    * @param program The program to run.
+    * @return
+    */
+  def fromProgram(program: PushProgram): PushInterpreter = {
+    PushInterpreter(PushInterpreterState.fromProgram(program))
+  }
+
+  /**
+    * Runs the specified program.
+    *
+    * @param program The instructions to execute.
+    * @return The state of the interpreter once the exec stack is empty.
+    */
+  def runProgram(program: PushProgram): PushInterpreterState = {
+    PushInterpreter.fromProgram(program).run()
+  }
+
+  /**
+    * Parses and runs the given program, represented as a string.
+    *
+    * @param program The program to run.
+    * @return either the state at the end of running, or None if the
+    *         program, was unparseable.
+    */
+  def parseAndRun(program: String): Option[PushInterpreterState] = {
+    PushParser.parse(program).map(PushInterpreter.runProgram)
+  }
+}
 
 
 case class PushInterpreterState(exec: PushStack[PushAtom],
@@ -19,27 +52,56 @@ case class PushInterpreterState(exec: PushStack[PushAtom],
                                 float: PushStack[Float],
                                 string: PushStack[String],
                                 boolean: PushStack[Boolean]) {
-  def topInt(): Option[Int] = int.contents.headOption
-  def topInts(n: Int): List[Int] = int.contents.take(n)
-  def topFloat(): Option[Float] = float.contents.headOption
-  def topFloats(n: Int): List[Float] = float.contents.take(n)
-  def topExec(): Option[PushAtom] = exec.contents.headOption
-  def topExecs(n: Int): List[PushAtom] = exec.contents.take(n)
-  def topCode(): Option[PushAtom] = code.contents.headOption
-  def topCodes(n: Int): List[PushAtom] = code.contents.take(n)
-  def topString(): Option[String] = string.contents.headOption
-  def topStrings(n: Int): List[String] = string.contents.take(n)
-  def topBoolean(): Option[Boolean] = boolean.contents.headOption
-  def topBooleans(n: Int): List[Boolean] = boolean.contents.take(n)
+
+  def pushExec(x: PushAtom): PushInterpreterState = this.copy(exec = exec.push(x))
+
+  def popExec(): (Option[PushAtom], PushInterpreterState) = {
+    val (result, newStack) = exec.pop()
+    (result, this.copy(exec = newStack))
+  }
 
 
+  def pushCode(x: PushAtom): PushInterpreterState = this.copy(code = code.push(x))
+
+  def popCode(): (Option[PushAtom], PushInterpreterState) = {
+    val (result, newStack) = code.pop()
+    (result, this.copy(code = newStack))
+  }
+
+  def pushInt(x: Int): PushInterpreterState = this.copy(int = int.push(x))
+
+  def popInt(): (Option[Int], PushInterpreterState) = {
+    val (result, newStack) = int.pop()
+    (result, this.copy(int = newStack))
+  }
+
+  def pushFloat(x: Float): PushInterpreterState = this.copy(float = float.push(x))
+
+  def popFloat(): (Option[Float], PushInterpreterState) = {
+    val (result, newStack) = float.pop()
+    (result, this.copy(float = newStack))
+  }
+
+  def pushString(x: String): PushInterpreterState = this.copy(string = string.push(x))
+
+  def popString(): (Option[String], PushInterpreterState) = {
+    val (result, newStack) = string.pop()
+    (result, this.copy(string = newStack))
+  }
+
+  def pushBoolean(x: Boolean): PushInterpreterState = this.copy(boolean = boolean.push(x))
+
+  def popBoolean(): (Option[Boolean], PushInterpreterState) = {
+    val (result, newStack) = boolean.pop()
+    (result, this.copy(boolean = newStack))
+  }
 }
 
 object PushInterpreterState {
   /**
     * @return The Push interpreter state corresponding to the given program
     */
-  def startProgram(program: PushProgram): PushInterpreterState = {
+  def fromProgram(program: PushProgram): PushInterpreterState = {
     // All stacks are empty except for the exec stack, which has the contents of the program.
     PushInterpreterState(
       PushStack(program.toList),
@@ -50,11 +112,35 @@ object PushInterpreterState {
       PushStack(List()),
     )
   }
+
+  /**
+    * @return A Push interpreter state with no data in it, useful for constructing examples and tests.
+    */
+  def empty: PushInterpreterState = PushInterpreterState(
+    PushStack(List()),
+    PushStack(List()),
+    PushStack(List()),
+    PushStack(List()),
+    PushStack(List()),
+    PushStack(List()),
+  )
 }
 
 /**
   * A single stack in the push interpreter state.
+  *
   * @param contents The contents of the stack.
   * @tparam T The type of the contents of the stack.
   */
-case class PushStack[T](contents: List[T])
+case class PushStack[T](contents: List[T]) {
+  def push(t: T): PushStack[T] = {
+    this.copy(t :: this.contents)
+  }
+
+  def pop(): (Option[T], PushStack[T]) = {
+    this.contents match {
+      case t :: more => (Some(t), PushStack(more))
+      case Nil => (None, this)
+    }
+  }
+}

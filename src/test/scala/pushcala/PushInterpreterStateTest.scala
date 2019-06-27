@@ -7,7 +7,7 @@ class PushInterpreterStateTest extends FunSpec with Matchers {
     it ("should be able to start a program") {
       val program = List[PushAtom](LiteralInt(3))
 
-      val state = PushInterpreterState.startProgram(program)
+      val state = PushInterpreterState.fromProgram(program)
       state.exec.contents shouldBe program
       state.int.contents shouldBe empty
       state.boolean.contents shouldBe empty
