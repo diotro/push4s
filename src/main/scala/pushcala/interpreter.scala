@@ -150,6 +150,15 @@ object PushInterpreterState {
   )
 }
 
+/** An enumeration of the types of Push stacks. */
+sealed trait PushStackType
+case object BooleanStack extends PushStackType
+case object IntStack extends PushStackType
+case object FloatStack extends PushStackType
+case object StringStack extends PushStackType
+case object ExecStack extends PushStackType
+case object CodeStack extends PushStackType
+
 /**
   * A single stack in the push interpreter state.
   *

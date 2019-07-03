@@ -18,12 +18,15 @@ object Instructions {
 // Instructions are functions that accept a push state and produce a new one
 // Although they can be referenced by symbols
 sealed trait InstructionDef extends (PushInterpreterState => PushInterpreterState) {
-  def name: String
+  val name: String
+  val stack: PushStackType
   override def apply(state: PushInterpreterState): PushInterpreterState
 }
 
-object BooleanNot extends InstructionDef {
-  val name = "boolean_not"
+private abstract class AbstractInstruction(val name: String, val stack: PushStackType)
+  extends InstructionDef
+
+object BooleanNot extends AbstractInstruction("boolean_not", BooleanStack) {
 
   override def apply(state: PushInterpreterState): PushInterpreterState = {
     val newBooleanStack = state.boolean.contents match {
