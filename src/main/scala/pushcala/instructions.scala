@@ -23,7 +23,7 @@ sealed trait InstructionDef extends (PushInterpreterState => PushInterpreterStat
   override def apply(state: PushInterpreterState): PushInterpreterState
 }
 
-private abstract class AbstractInstruction(val name: String, val stack: PushStackType)
+abstract class AbstractInstruction(val name: String, val stack: PushStackType)
   extends InstructionDef
 
 object BooleanNot extends AbstractInstruction("boolean_not", BooleanStack) {
