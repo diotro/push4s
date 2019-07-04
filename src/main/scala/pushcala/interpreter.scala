@@ -16,7 +16,9 @@ case class PushInterpreter(state: PushInterpreterState) {
 
   private def processAtom(state: PushInterpreterState, atom: PushAtom): PushInterpreterState = {
     atom match {
-      case PushList(atoms) => atoms.foldLeft(state)(processAtom)
+      case PushList(atoms) => atoms.foldRight(state){
+        case (nextAtom, accumulatedState) => accumulatedState.pushExec(nextAtom)
+      }
       case LiteralBoolean(b) => state.pushBoolean(b)
       case LiteralInt(i) => state.pushInt(i)
       case LiteralFloat(f) => state.pushFloat(f)
