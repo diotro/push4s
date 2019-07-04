@@ -1,8 +1,8 @@
 import org.scalatest.{FunSpec, Matchers}
-import pushcala.LiteralInt
+import pushcala.{BenchmarkLoader, LiteralInt, TestCase}
 
 class BenchmarkLoaderTest extends FunSpec with Matchers {
-  describe("Benchmark Loader") {
+  describe("pushcala.Benchmark Loader") {
     it("can read benchmarks in files") {
       val result = BenchmarkLoader.loadFromFile("src/main/resources/benchmark1.json")
       assert(result.get.name == "benchmark1")

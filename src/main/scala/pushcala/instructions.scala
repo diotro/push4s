@@ -1,6 +1,5 @@
 package pushcala
 
-
 // This object holds the map of all instruction names to the actual instruction.
 object Instructions {
   def getDef(i: Instruction): InstructionDef = map(i.name)

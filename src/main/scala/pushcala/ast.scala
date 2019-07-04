@@ -2,14 +2,14 @@ package pushcala
 
 sealed trait PushAtom
 
-sealed trait Literal[T] extends PushAtom {
+sealed trait PushLiteral[T] extends PushAtom {
   def value: T
 }
 
-case class LiteralInt(value: Int) extends Literal[Int]
-case class LiteralFloat(value: Float) extends Literal[Float]
-case class LiteralString(value: String) extends Literal[String]
-case class LiteralBoolean(value: Boolean) extends Literal[Boolean]
+case class LiteralInt(value: Int) extends PushLiteral[Int]
+case class LiteralFloat(value: Float) extends PushLiteral[Float]
+case class LiteralString(value: String) extends PushLiteral[String]
+case class LiteralBoolean(value: Boolean) extends PushLiteral[Boolean]
 
 
 case class Instruction (name: String) extends PushAtom {

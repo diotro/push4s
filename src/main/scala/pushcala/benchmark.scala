@@ -1,8 +1,9 @@
-import pushcala.{BooleanStack, FloatStack, IntStack, LiteralBoolean, LiteralFloat, LiteralInt, LiteralString, PushAtom, PushStackType, StringStack}
+package pushcala
+
+import org.json4s._
+import org.json4s.native.JsonMethods
 
 import scala.io.Source
-import org.json4s._
-import org.json4s.native.JsonMethods._
 
 
 /** A benchmark for program synthesis.
@@ -19,7 +20,7 @@ case class Benchmark(name: String,
 
 
 /** A single test case, where the given inputs should lead to the specified output. */
-case class TestCase(inputs: Seq[PushAtom], outputs: Seq[PushAtom])
+case class TestCase(inputs: Seq[PushAtom], outputs: Seq[PushLiteral[_]])
 
 
 case class ParsedBenchmark(name: String,
@@ -47,18 +48,18 @@ case class ParsedBenchmark(name: String,
 }
 
 case class ParsedTestCase(in: Seq[JValue], out: Seq[JValue]) {
-  def jvalueToPushAtom(j: JValue): PushAtom = {
+  def jvalueToPushLiteral(j: JValue): PushLiteral[_] = {
     j match {
       case JBool(b) => LiteralBoolean(b)
       case JInt(i) => LiteralInt(i.toInt)
       case JDouble(f) => LiteralFloat(f.toFloat)
       case JString(s) => LiteralString(s)
-      case _ => throw new IllegalArgumentException()
+      case _ => throw new IllegalArgumentException("Must be literal type.")
     }
   }
 
   def toTestCase: TestCase = {
-    TestCase(in.map(jvalueToPushAtom), out.map(jvalueToPushAtom))
+    TestCase(in.map(jvalueToPushLiteral), out.map(jvalueToPushLiteral))
   }
 }
 
@@ -67,7 +68,7 @@ object BenchmarkLoader {
 
   /** Loads a benchmark from the given Source. */
   def load(source: Source): Option[Benchmark] =
-    parseOpt(source.mkString)
+    JsonMethods.parseOpt(source.mkString)
       .map(_.extract[ParsedBenchmark])
       .map(_.toBenchmark)
 
