@@ -7,8 +7,9 @@
   ],
   "evaluationTestCases": [
     {"in": [5, 4], "out":  [9]},
-    {"in": [12, 12], "out":  [2]},
-    {"in": [3, -3], "out":  [0]}
+    {"in": [12, 12], "out":  [24]},
+    {"in": [3, -3], "out":  [0]},
+    {"in": [500, 100], "out":  [600]}
   ],
   "stacks": ["Boolean", "Integer"]
 }

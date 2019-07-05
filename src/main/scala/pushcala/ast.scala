@@ -12,17 +12,11 @@ case class LiteralString(value: String) extends PushLiteral[String]
 case class LiteralBoolean(value: Boolean) extends PushLiteral[Boolean]
 
 
-case class Instruction (name: String) extends PushAtom {
-  override def hashCode(): Int = {
-    this.name.hashCode()
-  }
-
-  override def equals(obj: Any): Boolean = obj match {
-    case that: Instruction => this.name == that.name
-    case _ => false
-  }
-}
-
+/** Represents an instruction, referenced by name. Use Instructions.getDef(…) to retrieve
+  * the actual function underlying this instruction.
+  * @param name The name of this instruction.
+  */
+case class Instruction (name: String) extends PushAtom
 
 object Instruction {
   def fromName(name: String): Option[Instruction] = {

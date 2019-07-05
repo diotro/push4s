@@ -5,7 +5,6 @@ import org.json4s.native.JsonMethods
 
 import scala.io.Source
 
-
 /** A benchmark for program synthesis.
   *
   * @param name                The name of the benchmark.
@@ -22,10 +21,15 @@ case class Benchmark(name: String,
   def objectives: Seq[Objective] = this.trainingTestCases.map(Objective)
 
   /** @return The results of evaluating the given program against each of the evaluation test
-    *         cases. */
+    *         cases.
+    */
   def evaluate(program: PushProgram): Seq[Double] = {
-    this.evaluationTestCases.map(Objective).flatMap(_.score))
+    this.evaluationTestCases.map(Objective).flatMap(_.score(program))
+  }
 
+  /** Does that program pass this benchmark? That is, does it score "0" on each objective? */
+  def passedBy(program: PushProgram): Boolean = {
+    this.evaluate(program).sum == 0d
   }
 }
 
@@ -38,8 +42,6 @@ case class ParsedBenchmark(name: String,
                            trainingTestCases: Seq[ParsedTestCase],
                            evaluationTestCases: Seq[ParsedTestCase],
                            includedStacks: Seq[String]) {
-  println(this)
-
   def stringToPushStack(string: String): PushStackType = {
     string match {
       case "boolean" => BooleanStack

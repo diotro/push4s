@@ -52,9 +52,8 @@ object Levenshtein {
   // https://github.com/vickumar1981/stringdistance/blob/master/src/main/scala/com/github/vickumar1981/stringdistance/impl/LevenshteinDistanceImpl.scala
   // which is not updated for 2.13.
   def distance(a: String, b: String): Int =
-    ((0 to b.size).toList /: a) ((prev, x) =>
+    ((0 to b.length).toList /: a) ((prev, x) =>
       (prev zip prev.tail zip b).scanLeft(prev.head + 1) {
         case (h, ((d, v), y)) => math.min(math.min(h + 1, v + 1), d + (if (x == y) 0 else 1))
       }).last
-
 }

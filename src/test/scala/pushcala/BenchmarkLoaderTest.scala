@@ -1,5 +1,6 @@
+package pushcala
+
 import org.scalatest.{FunSpec, Matchers}
-import pushcala.{BenchmarkLoader, LiteralInt, TestCase}
 
 class BenchmarkLoaderTest extends FunSpec with Matchers {
   describe("pushcala.Benchmark Loader") {

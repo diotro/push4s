@@ -4,7 +4,7 @@ object PushParser {
   /**
     * Parses the given push program (in string form)
     *
-    * @param program She program to parse.
+    * @param program The program to parse.
     * @return Some program, if it was parseable, or None, if it was not.
     */
   def parse(program: String): Option[PushProgram] = {
@@ -16,7 +16,6 @@ object PushParser {
       .split("\\s+")
       .filter(_ != "")
       .toList
-
     parseAtoms(atoms)
   }
 
@@ -60,7 +59,8 @@ object PushParser {
   }
 
   private def parseAtom(atom: String): Option[PushAtom] = {
-    atom match {
+    println(atom)
+    val out = atom match {
       case intStr if intStr.toIntOption.isDefined => Some(LiteralInt(intStr.toInt))
       case floatStr if floatStr.toFloatOption.isDefined => Some(LiteralFloat(floatStr.toFloat))
       case boolStr if boolStr.toBooleanOption.isDefined => Some(LiteralBoolean(boolStr.toBoolean))
@@ -70,5 +70,7 @@ object PushParser {
         Instruction.fromName(instruction)
       case _ => None
     }
+    println(out)
+    out
   }
 }
