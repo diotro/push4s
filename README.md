@@ -1,3 +1,3 @@
-# pushscala
+# push4s
  
- `pushscala` is a scala implementation of the [Push](https://erp12.github.io/push-redux/) language.
+ `push4s` is a scala implementation of the [Push](https://erp12.github.io/push-redux/) language.
