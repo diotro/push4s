@@ -6,7 +6,7 @@ object RunBenchmark {
     val benchmark = BenchmarkLoader.loadFromFile(filename).get
 
     // Read the program as the second argument - No GP yet.
-    println(args(1))
+    println(s"Running program ${args(1)} on benchmark ${filename}")
     val program = PushParser.parse(args(1)).get
 
     println(benchmark.evaluate(program))
