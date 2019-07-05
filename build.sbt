@@ -1,4 +1,4 @@
-name := "pushcala"
+name := "push4s"
 
 version := "0.1"
 

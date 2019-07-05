@@ -26,16 +26,14 @@ object Instruction {
   /** @return The instruction with the given name, if there is one. */
   def fromName(name: String): Option[Instruction] = {
     if (Instruction.exists(name)) {
-      Some(new Instruction(name))
+      Some(Instruction(name))
     } else {
       None
     }
   }
 
   /** @return Whether there is an instruction with the given name. */
-  def exists(name: String): Boolean = {
-    Instructions.containsDefinitionFor(name)
-  }
+  def exists(name: String): Boolean = Instructions.containsDefinitionFor(name)
 
   // Hide apply constructor, so you can't make an instruction without using `fromName`.
   private def apply(): Unit = {}

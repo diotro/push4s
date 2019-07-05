@@ -208,11 +208,6 @@ case class PushInterpreterState(exec: PushStack[PushAtom],
     strings.fold(this) { case (i1, i2) => newState.pushLiteral(func(i1, i2)) }
   }
 
-  def mapStringToAny(func: (String, String, String) => PushLiteral[_]): PushInterpreterState = {
-    val (strings, newState) = this.pop2Strings()
-    strings.fold(this) { case (i1, i2) => newState.pushLiteral(func(i1, i2)) }
-  }
-
   def pushBoolean(b: Boolean): PushInterpreterState = this.copy(boolean = boolean.push(b))
 
   def popBoolean(): (Option[Boolean], PushInterpreterState) = {

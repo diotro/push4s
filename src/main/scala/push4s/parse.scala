@@ -65,7 +65,7 @@ object PushParser {
       case boolStr if boolStr.toBooleanOption.isDefined => Some(LiteralBoolean(boolStr.toBoolean))
       case str if str.startsWith("\"") && str.endsWith("\"") =>
         Some(LiteralString(str.substring(1, str.length - 1)))
-      case instruction if Instruction.fromName(instruction).isDefined =>
+      case instruction if Instruction.exists(instruction) =>
         Instruction.fromName(instruction)
       case _ => None
     }
