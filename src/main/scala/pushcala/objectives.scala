@@ -4,9 +4,13 @@ package pushcala
 /** The objective function for a Push benchmark test case. */
 case class Objective(testCase: TestCase) {
 
-  def score(pushInterpreterState: PushInterpreterState): Seq[Double] = {
+  def score(program: PushProgram): Seq[Double] = {
+    val result = PushInterpreter.runProgramWithInputs(program, testCase.inputs)
+
+    // Starting from the result and an empty list of scores, gradually add scores based on output
+    // and remove the atoms that have been popped and scored.
     testCase.outputs.foldLeft(
-      (pushInterpreterState, Seq[Double]())
+      (result, Seq[Double]())
     )(scoreOneOutput)._2
   }
 

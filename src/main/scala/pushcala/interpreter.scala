@@ -1,10 +1,10 @@
 package pushcala
 
-
+/** A push interpreter, with a specific state.
+  * @param state The state of this push interpreter.
+  */
 case class PushInterpreter(state: PushInterpreterState) {
-  /**
-    * @return This interpreter, after one additional step
-    */
+  /** @return This interpreter, after one additional step. */
   def step(): PushInterpreter = {
     val (nextInstruction, newState) = this.state.popExec()
     val nextState = nextInstruction match {
@@ -38,8 +38,7 @@ case class PushInterpreter(state: PushInterpreterState) {
 }
 
 object PushInterpreter {
-  /**
-    * Creates a Push Interpreter, with starting state equal to just
+  /** Creates a Push Interpreter, with starting state equal to just
     * the given program.
     *
     * @param program The program to run.
@@ -49,8 +48,7 @@ object PushInterpreter {
     PushInterpreter(PushInterpreterState.fromProgram(program))
   }
 
-  /**
-    * Runs the specified program.
+  /** Runs the specified program.
     *
     * @param program The instructions to execute.
     * @return The state of the interpreter once the exec stack is empty.
@@ -59,8 +57,7 @@ object PushInterpreter {
     PushInterpreter.fromProgram(program).run()
   }
 
-  /**
-    * Parses and runs the given program, represented as a string.
+  /** Parses and runs the given program, represented as a string.
     *
     * @param program The program to run.
     * @return either the state at the end of running, or None if the
@@ -68,6 +65,13 @@ object PushInterpreter {
     */
   def parseAndRun(program: String): Option[PushInterpreterState] = {
     PushParser.parse(program).map(PushInterpreter.runProgram)
+  }
+
+  /** Pushes the given program and inputs to the exec stack (in that order - so program first)
+    * and then runs the program.
+    */
+  def runProgramWithInputs(program: PushProgram, inputs: Seq[PushAtom]): PushInterpreterState = {
+    PushInterpreter.runProgram(program ++ inputs)
   }
 }
 

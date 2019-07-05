@@ -16,7 +16,18 @@ import scala.io.Source
 case class Benchmark(name: String,
                      trainingTestCases: Seq[TestCase],
                      evaluationTestCases: Seq[TestCase],
-                     includedStacks: Seq[PushStackType])
+                     includedStacks: Seq[PushStackType]) {
+
+  /** @return The objectives that should be used for training programs for this benchmark. */
+  def objectives: Seq[Objective] = this.trainingTestCases.map(Objective)
+
+  /** @return The results of evaluating the given program against each of the evaluation test
+    *         cases. */
+  def evaluate(program: PushProgram): Seq[Double] = {
+    this.evaluationTestCases.map(Objective).flatMap(_.score))
+
+  }
+}
 
 
 /** A single test case, where the given inputs should lead to the specified output. */
