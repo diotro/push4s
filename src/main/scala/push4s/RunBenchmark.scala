@@ -1,4 +1,4 @@
-package pushcala
+package push4s
 
 object RunBenchmark {
   def main(args: Array[String]): Unit = {

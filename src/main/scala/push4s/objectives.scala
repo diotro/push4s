@@ -1,4 +1,4 @@
-package pushcala
+package push4s
 
 
 /** The objective function for a Push benchmark test case. */

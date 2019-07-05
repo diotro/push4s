@@ -1,4 +1,4 @@
-package pushcala
+package push4s
 
 /** The units of a push program. Everything that can be parsed (lists included) extends
   * this class.

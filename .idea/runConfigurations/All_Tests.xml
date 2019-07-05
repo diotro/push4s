@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="All Tests" type="ScalaTestRunConfiguration" factoryName="ScalaTest">
-    <module name="pushcala" />
+    <module name="push4s" />
     <setting name="path" value="" />
     <setting name="vmparams" value="" />
     <setting name="params" value="" />

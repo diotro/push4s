@@ -1,4 +1,4 @@
-package pushcala
+package push4s
 
 import scala.util.Try
 
@@ -19,8 +19,7 @@ private object InstructionsMap {
   ).map(i => i.name -> i).toMap
 }
 
-/** Used to get Instructions
-  */
+/** Used to get Instructions */
 object Instructions {
   def getDef(i: Instruction): InstructionDef = InstructionsMap.map(i.name)
 
@@ -33,14 +32,14 @@ object Instructions {
   */
 sealed trait InstructionDef extends (PushInterpreterState => PushInterpreterState) {
   val name: String
-  val stacks: Iterable[PushStackType]
+  val stack: PushStackType
 }
 
 /** Abstract class that all instructions should extend.
   *
-  * @param name   The name of this instruction, as it will be written in Push programs.
-  * @param stacks The stacks that this instruction is associated with - as in, don't include
-  *               this instruction is those stacks aren't toggled on.
+  * @param name  The name of this instruction, as it will be written in Push programs.
+  * @param stack The stack that this instruction is associated with - as in, don't include
+  *              this instruction if that stack isn't in use.
   */
 private case class Instruction(name: String,
                                stack: PushStackType,
@@ -57,7 +56,7 @@ object BooleanXor extends Instruction("boolean_xor", BooleanStack, _.mapBoolean(
 object BooleanFromInteger extends Instruction("boolean_frominteger", BooleanStack,
   _.mapIntToAny(i => LiteralBoolean(if (i == 0) false else true)))
 object BooleanFromFloat extends Instruction("boolean_fromfloat", BooleanStack,
-  _.mapFloatToAny(i => LiteralBoolean(if (i == 0) false else true)))
+  _.mapFloatToAny(i => LiteralBoolean(if (i == 0f) false else true)))
 
 
 object IntegerAdd extends Instruction("integer_add", IntStack, _.mapInt(_ + _))
@@ -124,3 +123,30 @@ object FloatDec extends Instruction("float_dec", FloatStack, _.mapFloat(_ - 1))
 //      }
 //    case _ => state
 //  })
+
+object CodeAppend extends Instruction("code_append", CodeStack, x => x)
+object CodeAtom extends Instruction("code_atom", CodeStack, x => x)
+object CodeCar extends Instruction("code_car", CodeStack, x => x)
+object CodeCdr extends Instruction("code_cdr", CodeStack, x => x)
+object CodeCons extends Instruction("code_cons", CodeStack, x => x)
+object CodeDo extends Instruction("code_do", CodeStack, x => x)
+object CodeDoStar extends Instruction("code_do*", CodeStack, x => x)
+object CodeDoStarRange extends Instruction("code_do*range", CodeStack, x => x)
+object CodeDoStarCount extends Instruction("code_do*count", CodeStack, x => x)
+object CodeWrap extends Instruction("code_wrap", CodeStack, x => x)
+object CodeList extends Instruction("code_list", CodeStack, x => x)
+object CodeLength extends Instruction("code_length", CodeStack, x => x)
+object CodeMap extends Instruction("code_map", CodeStack, x => x)
+object CodeMember extends Instruction("code_member", CodeStack, x => x)
+object CodeNth extends Instruction("code_nth", CodeStack, x => x)
+object CodeNthcdr extends Instruction("code_nthcdr", CodeStack, x => x)
+object CodeNull extends Instruction("code_null", CodeStack, x => x)
+object CodeExtract extends Instruction("code_extract", CodeStack, x => x)
+object CodeInsert extends Instruction("code_insert", CodeStack, x => x)
+object CodeSubst extends Instruction("code_subst", CodeStack, x => x)
+object CodeContains extends Instruction("code_contains", CodeStack, x => x)
+object CodeContaining extends Instruction("code_containing", CodeStack, x => x)
+object CodePosition extends Instruction("code_position", CodeStack, x => x)
+
+object ExecDoStarRange extends Instruction("exec_do*range", ExecStack, x => x)
+object ExecDoStarCount extends Instruction("exec_do*count", ExecStack, x => x)

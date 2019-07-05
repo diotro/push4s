@@ -1,4 +1,4 @@
-package pushcala
+package push4s
 
 import org.scalatest.{FunSpec, FunSuite, Matchers}
 

@@ -1,4 +1,4 @@
-package pushcala
+package push4s
 
 /** A push interpreter, with a specific state.
   *

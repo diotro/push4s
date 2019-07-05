@@ -1,4 +1,4 @@
-package pushcala
+package push4s
 
 import org.scalatest.{FunSpec, Matchers}
 import org.scalatest.Assertions._

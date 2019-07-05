@@ -1,4 +1,4 @@
-package pushcala
+package push4s
 
 object PushParser {
   /**
