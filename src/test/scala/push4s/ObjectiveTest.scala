@@ -8,6 +8,7 @@ class ObjectiveTest extends FunSpec with Matchers {
       val obj = Objective(TestCase(Seq(LiteralInt(1)), Seq(LiteralInt(1))))
       obj.score(PushParser.parse("3").get) shouldBe Seq(2)
     }
+    // TODO: Test other types of objectives
   }
 
 }

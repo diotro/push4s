@@ -69,9 +69,7 @@ class PushInterpreterTest extends FunSpec with Matchers {
           PushInterpreterState.fromProgram(
             PushParser.parse("(true 3 4)").get))
         val out = start.step()
-        out.state.popBoolean()._1 should contain(true)
-        // the four is pushed after the three, so should be retrieved first
-        out.state.popInt()._1 should contain(4)
+        out.state.popExec()._1 should contain(LiteralBoolean(true))
       }
 
       it ("should run instructions") {
