@@ -86,5 +86,5 @@ object BenchmarkLoader {
       .map(_.toBenchmark)
 
   /** Loads a benchmark from the given file. */
-  def loadFromFile(fileName: String): Option[Benchmark] = this.load(io.Source.fromFile(fileName))
+  def loadFromFile(fileName: String): Option[Benchmark] = this.load(Source.fromFile(fileName))
 }

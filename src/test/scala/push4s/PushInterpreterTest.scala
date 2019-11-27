@@ -4,6 +4,13 @@ import org.scalatest.{FunSpec, Matchers}
 
 class PushInterpreterTest extends FunSpec with Matchers {
   describe("PushInterpreter") {
+    describe("parseAndRun()") {
+      it ("Adds 2 and 3") {
+        PushInterpreter.parseAndRun("( 2 3 integer_add )") shouldBe
+          Some(PushInterpreterState.empty.pushInt(5))
+      }
+    }
+
     describe("run()") {
       it ("should return immediately if exec is empty") {
         val result = PushInterpreter(PushInterpreterState.empty).run()
