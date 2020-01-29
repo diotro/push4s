@@ -18,13 +18,13 @@ case class Benchmark(name: String,
                      includedStacks: Seq[PushStackType]) {
 
   /** @return The objectives that should be used for training programs for this benchmark. */
-  def objectives: Seq[Objective] = this.trainingTestCases.map(Objective)
+  def objectives: Seq[TestCaseObjective] = this.trainingTestCases.map(TestCaseObjective)
 
   /** @return The results of evaluating the given program against each of the evaluation test
     *         cases.
     */
   def evaluate(program: PushProgram): Seq[Double] = {
-    this.evaluationTestCases.map(Objective).flatMap(_.score(program))
+    this.evaluationTestCases.map(TestCaseObjective).flatMap(_.score(program))
   }
 
   /** Does that program pass this benchmark? That is, does it score "0" on each objective? */
@@ -86,5 +86,5 @@ object BenchmarkLoader {
       .map(_.toBenchmark)
 
   /** Loads a benchmark from the given file. */
-  def loadFromFile(fileName: String): Option[Benchmark] = this.load(io.Source.fromFile(fileName))
+  def loadFromFile(fileName: String): Option[Benchmark] = this.load(Source.fromFile(fileName))
 }

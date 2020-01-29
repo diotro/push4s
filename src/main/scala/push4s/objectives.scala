@@ -2,7 +2,7 @@ package push4s
 
 
 /** The objective function for a Push benchmark test case. */
-case class Objective(testCase: TestCase) {
+case class TestCaseObjective(testCase: TestCase) {
 
   def score(program: PushProgram): Seq[Double] = {
     val result = PushInterpreter.runProgramWithInputs(program, testCase.inputs)

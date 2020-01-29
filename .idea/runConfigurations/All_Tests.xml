@@ -12,13 +12,13 @@
         <option value="push4s.BenchmarkLoaderTest" />
         <option value="push4s.PushInterpreterTest" />
         <option value="push4s.PushInterpreterStateTest" />
-        <option value="push4s.PushInterpreterTest" />
         <option value="push4s.PushParserTest" />
         <option value="push4s.ObjectiveTest" />
-        <option value="push4s.PushInterpreterStateTest" />
-        <option value="push4s.BenchmarkLoaderTest" />
         <option value="push4s.InstructionTest" />
         <option value="push4s.PushStackTest" />
+        <option value="push4s.PushInterpreterTest" />
+        <option value="push4s.PushInterpreterStateTest" />
+        <option value="push4s.BenchmarkLoaderTest" />
       </list>
     </option>
     <option name="envs">
