@@ -15,30 +15,30 @@ case class TestCaseObjective(testCase: TestCase) {
   }
 
   private def scoreOneOutput(stateAndScore: (PushInterpreterState, Seq[Double]),
-                             expectedOutput: PushLiteral[_])
+                             expectedOutput: PushAtom[_])
   : (PushInterpreterState, Seq[Double]) = {
     val (state: PushInterpreterState, scores: Seq[Double]) = stateAndScore
 
     expectedOutput match {
-      case LiteralBoolean(b) =>
+      case PushBoolean(b) =>
         state.popBoolean() match {
           case (maybeBool, newState) =>
             // The score is 1 if the top boolean is equal to the boolean specified
             (newState, scores :+ maybeBool.map(a => if (a == b) 1d else 0d).getOrElse(0d))
         }
-      case LiteralInt(i) =>
+      case PushInt(i) =>
         state.popInt() match {
           case (maybeInt, newState) =>
             // Score based on distance. If there is no int in the stack, assume 0f.
             (newState, scores :+ math.abs(maybeInt.getOrElse(0) - i))
         }
-      case LiteralFloat(i) =>
+      case PushFloat(i) =>
         state.popFloat() match {
           case (maybeFloat, newState) =>
             // Score based on distance. If there is no float in the stack, assume 0f.
             (newState, scores :+ math.abs(maybeFloat.getOrElse(0f) - i))
         }
-      case LiteralString(s) =>
+      case PushString(s) =>
         state.popString() match {
           case (maybeString, newState) =>
             (newState, scores :+ Levenshtein.distance(maybeString.getOrElse(""), s))

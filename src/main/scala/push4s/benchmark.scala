@@ -35,7 +35,7 @@ case class Benchmark(name: String,
 
 
 /** A single test case, where the given inputs should lead to the specified output. */
-case class TestCase(inputs: Seq[PushAtom], outputs: Seq[PushLiteral[_]])
+case class TestCase(inputs: Seq[PushElement], outputs: Seq[PushAtom[_]])
 
 
 case class ParsedBenchmark(name: String,
@@ -61,12 +61,12 @@ case class ParsedBenchmark(name: String,
 }
 
 case class ParsedTestCase(in: Seq[JValue], out: Seq[JValue]) {
-  def jvalueToPushLiteral(j: JValue): PushLiteral[_] = {
+  def jvalueToPushLiteral(j: JValue): PushAtom[_] = {
     j match {
-      case JBool(b) => LiteralBoolean(b)
-      case JInt(i) => LiteralInt(i.toInt)
-      case JDouble(f) => LiteralFloat(f.toFloat)
-      case JString(s) => LiteralString(s)
+      case JBool(b) => PushBoolean(b)
+      case JInt(i) => PushInt(i.toInt)
+      case JDouble(f) => PushFloat(f.toFloat)
+      case JString(s) => PushString(s)
       case _ => throw new IllegalArgumentException("Must be literal type.")
     }
   }

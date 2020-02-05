@@ -17,10 +17,10 @@ class PushParserTest extends FunSpec with Matchers {
     }
 
     it ("should work on single atoms") {
-      PushParser.parse("3").get shouldBe List(LiteralInt(3))
-      PushParser.parse("3.0").get shouldBe List(LiteralFloat(3.0f))
-      PushParser.parse("true").get shouldBe List(LiteralBoolean(true))
-      PushParser.parse("\"h\"").get shouldBe List(LiteralString("h"))
+      PushParser.parse("3").get shouldBe List(PushInt(3))
+      PushParser.parse("3.0").get shouldBe List(PushFloat(3.0f))
+      PushParser.parse("true").get shouldBe List(PushBoolean(true))
+      PushParser.parse("\"h\"").get shouldBe List(PushString("h"))
     }
 
     it ("can parse instructions it knows about") {
@@ -38,10 +38,10 @@ class PushParserTest extends FunSpec with Matchers {
 
     it ("can parse multiple atoms") {
       PushParser.parse("3 3.0 true \"h\"").get shouldBe List(
-        LiteralInt(3),
-        LiteralFloat(3.0f),
-        LiteralBoolean(true),
-        LiteralString("h")
+        PushInt(3),
+        PushFloat(3.0f),
+        PushBoolean(true),
+        PushString("h")
       )
     }
 
@@ -49,9 +49,9 @@ class PushParserTest extends FunSpec with Matchers {
       PushParser.parse("()").get shouldBe List(PushList(List()))
 
       PushParser.parse("0 (1 2) (3 (4))").get shouldBe List(
-        LiteralInt(0),
-        PushList(List(LiteralInt(1), LiteralInt(2))),
-        PushList(List(LiteralInt(3), PushList(List(LiteralInt(4)))))
+        PushInt(0),
+        PushList(List(PushInt(1), PushInt(2))),
+        PushList(List(PushInt(3), PushList(List(PushInt(4)))))
       )
     }
 

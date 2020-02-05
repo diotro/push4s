@@ -22,7 +22,7 @@ class PushInterpreterTest extends FunSpec with Matchers {
 
       it ("can handle booleans") {
         val before = PushInterpreter(
-          PushInterpreterState.empty.pushExec(LiteralBoolean(true)))
+          PushInterpreterState.empty.pushExec(PushBoolean(true)))
 
         val after = before.step()
         after.state.popBoolean()._1 should contain (true)
@@ -31,7 +31,7 @@ class PushInterpreterTest extends FunSpec with Matchers {
 
       it ("can handle strings") {
         val before = PushInterpreter(
-          PushInterpreterState.empty.pushExec(LiteralString("ok")))
+          PushInterpreterState.empty.pushExec(PushString("ok")))
 
         val after = before.step()
         after.state.popString()._1 should contain ("ok")
@@ -40,7 +40,7 @@ class PushInterpreterTest extends FunSpec with Matchers {
 
       it ("can handle ints") {
         val before = PushInterpreter(
-          PushInterpreterState.empty.pushExec(LiteralInt(-100)))
+          PushInterpreterState.empty.pushExec(PushInt(-100)))
 
         val after = before.step()
         after.state.popInt()._1 should contain (-100)
@@ -49,7 +49,7 @@ class PushInterpreterTest extends FunSpec with Matchers {
 
       it ("can handle floats") {
         val before = PushInterpreter(
-          PushInterpreterState.empty.pushExec(LiteralFloat(12.3f)))
+          PushInterpreterState.empty.pushExec(PushFloat(12.3f)))
 
         val after = before.step()
         after.state.popFloat()._1 should contain (12.3f)
@@ -69,7 +69,7 @@ class PushInterpreterTest extends FunSpec with Matchers {
           PushInterpreterState.fromProgram(
             PushParser.parse("(true 3 4)").get))
         val out = start.step()
-        out.state.popExec()._1 should contain(LiteralBoolean(true))
+        out.state.popExec()._1 should contain(PushBoolean(true))
       }
 
       it ("should run instructions") {

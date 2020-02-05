@@ -5,7 +5,7 @@ import org.scalatest.{FunSpec, Matchers}
 class PushInterpreterStateTest extends FunSpec with Matchers {
   describe("PushInterpreterState") {
     it ("should be able to start a program") {
-      val program = List[PushAtom](LiteralInt(3))
+      val program = List[PushElement](PushInt(3))
 
       val state = PushInterpreterState.fromProgram(program)
       state.exec.contents shouldBe program

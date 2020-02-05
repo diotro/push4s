@@ -8,7 +8,7 @@ class BenchmarkLoaderTest extends FunSpec with Matchers {
       val result = BenchmarkLoader.loadFromFile("src/main/resources/benchmark1.json")
       assert(result.get.name == "benchmark1")
       assert(result.get.trainingTestCases.head ==
-        TestCase(Seq(LiteralInt(3), LiteralInt(4)), Seq(LiteralInt(7))))
+        TestCase(Seq(PushInt(3), PushInt(4)), Seq(PushInt(7))))
     }
   }
 

@@ -3,24 +3,24 @@ package push4s
 /** The units of a push program. Everything that can be parsed (lists included) extends
   * this class.
   */
-sealed trait PushAtom
+sealed trait PushElement
 
 /** A literal with a value of type T. */
-sealed trait PushLiteral[T] extends PushAtom {
+sealed trait PushAtom[T] extends PushElement {
   def value: T
 }
 
-case class LiteralInt(value: Int) extends PushLiteral[Int]
-case class LiteralFloat(value: Float) extends PushLiteral[Float]
-case class LiteralString(value: String) extends PushLiteral[String]
-case class LiteralBoolean(value: Boolean) extends PushLiteral[Boolean]
+case class PushInt(value: Int) extends PushAtom[Int]
+case class PushFloat(value: Float) extends PushAtom[Float]
+case class PushString(value: String) extends PushAtom[String]
+case class PushBoolean(value: Boolean) extends PushAtom[Boolean]
 
 
 /** Represents an instruction, referenced by name. Use Instructions.getDef(…) to retrieve
   * the actual function underlying this instruction.
   * @param name The name of this instruction.
   */
-case class Instruction (name: String) extends PushAtom
+case class Instruction (name: String) extends PushElement
 
 object Instruction {
   /** @return The instruction with the given name, if there is one. */
@@ -40,5 +40,5 @@ object Instruction {
 }
 
 /** A list contains is just a push program itself. */
-case class PushList(contents: PushProgram) extends PushAtom
+case class PushList(contents: PushProgram) extends PushElement
 

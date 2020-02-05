@@ -58,13 +58,13 @@ object PushParser {
     }
   }
 
-  private def parseAtom(atom: String): Option[PushAtom] = {
+  private def parseAtom(atom: String): Option[PushElement] = {
     atom match {
-      case intStr if intStr.toIntOption.isDefined => Some(LiteralInt(intStr.toInt))
-      case floatStr if floatStr.toFloatOption.isDefined => Some(LiteralFloat(floatStr.toFloat))
-      case boolStr if boolStr.toBooleanOption.isDefined => Some(LiteralBoolean(boolStr.toBoolean))
+      case intStr if intStr.toIntOption.isDefined => Some(PushInt(intStr.toInt))
+      case floatStr if floatStr.toFloatOption.isDefined => Some(PushFloat(floatStr.toFloat))
+      case boolStr if boolStr.toBooleanOption.isDefined => Some(PushBoolean(boolStr.toBoolean))
       case str if str.startsWith("\"") && str.endsWith("\"") =>
-        Some(LiteralString(str.substring(1, str.length - 1)))
+        Some(PushString(str.substring(1, str.length - 1)))
       case instruction if Instruction.exists(instruction) =>
         Instruction.fromName(instruction)
       case _ => None

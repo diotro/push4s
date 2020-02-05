@@ -14,8 +14,8 @@ private object InstructionsMap {
     IntegerFromBoolean, IntegerFromString, IntegerInc, IntegerDec,
     FloatAdd, FloatSub, FloatMult, FloatDiv, FloatMod,
     FloatFromBoolean, FloatFromString, FloatInc, FloatDec
-    // StringConcat, StringTake, StringLength, StringReverse,
-    // StringParseToChars, StringContains, StringReplace,
+     StringConcat, StringTake, StringLength, StringReverse,
+     StringParseToChars, StringContains, StringReplace,
   ).map(i => i.name -> i).toMap
 }
 
@@ -47,9 +47,9 @@ object BooleanOr extends InstructionDef("boolean_or", BooleanStack, _.mapBoolean
 object BooleanNot extends InstructionDef("boolean_not", BooleanStack, _.mapBoolean(!_))
 object BooleanXor extends InstructionDef("boolean_xor", BooleanStack, _.mapBoolean(_ ^ _))
 object BooleanFromInteger extends InstructionDef("boolean_frominteger", BooleanStack,
-  _.mapIntToAny(i => LiteralBoolean(if (i == 0) false else true)))
+  _.mapIntToAny(i => PushBoolean(if (i == 0) false else true)))
 object BooleanFromFloat extends InstructionDef("boolean_fromfloat", BooleanStack,
-  _.mapFloatToAny(i => LiteralBoolean(if (i == 0f) false else true)))
+  _.mapFloatToAny(i => PushBoolean(if (i == 0f) false else true)))
 
 
 object IntegerAdd extends InstructionDef("integer_add", IntStack, _.mapInt(_ + _))
@@ -58,10 +58,10 @@ object IntegerMult extends InstructionDef("integer_mult", IntStack, _.mapInt(_ *
 object IntegerDiv extends InstructionDef("integer_div", IntStack, _.mapInt(_ / _))
 object IntegerMod extends InstructionDef("integer_mod", IntStack, _.mapInt(_ % _))
 object IntegerFromBoolean extends InstructionDef("integer_fromboolean", IntStack,
-  _.mapBooleanToAny(b => LiteralInt(if (b) 1 else 0)))
+  _.mapBooleanToAny(b => PushInt(if (b) 1 else 0)))
 object IntegerFromString extends InstructionDef("integer_fromstring", IntStack,
   state => Try {
-    state.mapStringToAny(s => LiteralInt(s.toInt))
+    state.mapStringToAny(s => PushInt(s.toInt))
   }.getOrElse(state))
 object IntegerInc extends InstructionDef("integer_inc", IntStack, _.mapInt(_ + 1))
 object IntegerDec extends InstructionDef("integer_dec", IntStack, _.mapInt(_ - 1))
@@ -73,49 +73,49 @@ object FloatMult extends InstructionDef("float_mult", FloatStack, _.mapFloat(_ *
 object FloatDiv extends InstructionDef("float_div", FloatStack, _.mapFloat(_ / _))
 object FloatMod extends InstructionDef("float_mod", FloatStack, _.mapFloat(_ % _))
 object FloatFromBoolean extends InstructionDef("float_fromboolean", FloatStack,
-  _.mapBooleanToAny(b => LiteralFloat(if (b) 1f else 0f)))
+  _.mapBooleanToAny(b => PushFloat(if (b) 1f else 0f)))
 object FloatFromString extends InstructionDef("float_fromstring", FloatStack,
   state => Try {
-    state.mapStringToAny(s => LiteralFloat(s.toFloat))
+    state.mapStringToAny(s => PushFloat(s.toFloat))
   }.getOrElse(state))
 object FloatInc extends InstructionDef("float_inc", FloatStack, _.mapFloat(_ + 1))
 object FloatDec extends InstructionDef("float_dec", FloatStack, _.mapFloat(_ - 1))
 
-//object StringConcat extends Instruction("string_concat", StringStack, _.mapString(_ ++ _))
-//object StringTake extends Instruction("string_take", StringStack, state => {
-//  val (maybeStr, newState) = state.popString()
-//  maybeStr match {
-//    case Some(s) => newState.popInt() match {
-//      case (Some(i), finalState) => finalState.pushString(s.take(i))
-//      case _ => state
-//    }
-//    case _ => state
-//  }
-//})
-//object StringLength extends Instruction("string_length", StringStack, x => x)
-//object StringReverse extends Instruction("string_reverse", StringStack, x => x)
-//object StringParseToChars extends Instruction("string_parse_to_chars", StringStack,
-//  state => {
-//    state.popString() match {
-//      case (Some(str), newState) =>
-//        str.foldRight(newState)((char, stat) => stat.pushString(char.toString))
-//    }
-//  })
-//object StringContains extends Instruction("string_contains", StringStack,
-//  _.mapStringToAny((s1, s2) => LiteralBoolean(s1.contains(s2))))
-//object StringReplace extends Instruction("string_replace", StringStack,
-//  state => state.popString() match {
-//    case (Some(str1), state1) =>
-//      state1.popString() match {
-//        case (Some(str2), state2) =>
-//          state2.popString() match {
-//            case (Some(str3), state3) => state3.pushString(str3.replace(str2, str1))
-//            case _ => state
-//          }
-//        case _ => state
-//      }
-//    case _ => state
-//  })
+object StringConcat extends InstructionDef("string_concat", StringStack, _.mapString(_ ++ _))
+object StringTake extends InstructionDef("string_take", StringStack, state => {
+  val (maybeStr, newState) = state.popString()
+  maybeStr match {
+    case Some(s) => newState.popInt() match {
+      case (Some(i), finalState) => finalState.pushString(s.take(i))
+      case _ => state
+    }
+    case _ => state
+  }
+})
+object StringLength extends InstructionDef("string_length", StringStack, x => x)
+object StringReverse extends InstructionDef("string_reverse", StringStack, x => x)
+object StringParseToChars extends InstructionDef("string_parse_to_chars", StringStack,
+  state => {
+    state.popString() match {
+      case (Some(str), newState) =>
+        str.foldRight(newState)((char, stat) => stat.pushString(char.toString))
+    }
+  })
+object StringContains extends InstructionDef("string_contains", StringStack,
+  _.mapStringToAny((s1, s2) => PushBoolean(s1.contains(s2))))
+object StringReplace extends InstructionDef("string_replace", StringStack,
+  state => state.popString() match {
+    case (Some(str1), state1) =>
+      state1.popString() match {
+        case (Some(str2), state2) =>
+          state2.popString() match {
+            case (Some(str3), state3) => state3.pushString(str3.replace(str2, str1))
+            case _ => state
+          }
+        case _ => state
+      }
+    case _ => state
+  })
 
 object CodeAppend extends InstructionDef("code_append", CodeStack, x => x)
 object CodeAtom extends InstructionDef("code_atom", CodeStack, x => x)

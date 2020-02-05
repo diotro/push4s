@@ -5,20 +5,20 @@
     <option name="testKind" value="All in package" />
     <option name="classBuf">
       <list>
-        <option value="push4s.ObjectiveTest" />
         <option value="push4s.PushStackTest" />
         <option value="push4s.PushParserTest" />
         <option value="push4s.InstructionTest" />
         <option value="push4s.BenchmarkLoaderTest" />
         <option value="push4s.PushInterpreterTest" />
-        <option value="push4s.PushInterpreterStateTest" />
-        <option value="push4s.PushParserTest" />
-        <option value="push4s.ObjectiveTest" />
-        <option value="push4s.InstructionTest" />
-        <option value="push4s.PushStackTest" />
-        <option value="push4s.PushInterpreterTest" />
+        <option value="push4s.TestCaseObjectiveTest" />
         <option value="push4s.PushInterpreterStateTest" />
         <option value="push4s.BenchmarkLoaderTest" />
+        <option value="push4s.PushStackTest" />
+        <option value="push4s.PushParserTest" />
+        <option value="push4s.TestCaseObjectiveTest" />
+        <option value="push4s.InstructionTest" />
+        <option value="push4s.PushInterpreterStateTest" />
+        <option value="push4s.PushInterpreterTest" />
       </list>
     </option>
     <option name="envs">
