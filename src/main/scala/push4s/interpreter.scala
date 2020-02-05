@@ -5,26 +5,30 @@ package push4s
   * @param state The state of this push interpreter.
   */
 case class PushInterpreter(state: PushInterpreterState) {
+
   /** @return This interpreter, after one additional step. */
   def step(): PushInterpreter = {
     val (nextInstruction, newState) = this.state.popExec()
     val nextState = nextInstruction match {
       case Some(atom: PushElement) => processAtom(newState, atom)
-      case None => newState
+      case None                    => newState
     }
     PushInterpreter(nextState)
   }
 
-  private def processAtom(state: PushInterpreterState, atom: PushElement): PushInterpreterState = {
+  private def processAtom(state: PushInterpreterState,
+                          atom: PushElement): PushInterpreterState = {
     atom match {
-      case PushList(atoms) => atoms.foldRight(state) {
-        case (nextAtom, accumulatedState) => accumulatedState.pushExec(nextAtom)
-      }
-      case PushBoolean(b) => state.pushBoolean(b)
-      case PushInt(i) => state.pushInt(i)
-      case PushFloat(f) => state.pushFloat(f)
-      case PushString(s) => state.pushString(s)
-      case i: Instruction => Instructions.getDef(i)(state)
+      case PushList(atoms) =>
+        atoms.foldRight(state) {
+          case (nextAtom, accumulatedState) =>
+            accumulatedState.pushExec(nextAtom)
+        }
+      case PushBoolean(b)     => state.pushBoolean(b)
+      case PushInt(i)         => state.pushInt(i)
+      case PushFloat(f)       => state.pushFloat(f)
+      case PushString(s)      => state.pushString(s)
+      case i: PushInstruction => Instructions.getDef(i)(state)
     }
   }
 
@@ -39,6 +43,7 @@ case class PushInterpreter(state: PushInterpreterState) {
 }
 
 object PushInterpreter {
+
   /** Creates a Push Interpreter, with starting state equal to just
     * the given program.
     *
@@ -71,11 +76,11 @@ object PushInterpreter {
   /** Pushes the given inputs and program to the exec stack (in that order, so inputs are on top)
     * and then evaluates.
     */
-  def runProgramWithInputs(program: PushProgram, inputs: Seq[PushElement]): PushInterpreterState = {
+  def runProgramWithInputs(program: PushProgram,
+                           inputs: Seq[PushElement]): PushInterpreterState = {
     PushInterpreter.runProgram(inputs ++ program)
   }
 }
-
 
 case class PushInterpreterState(exec: PushStack[PushElement],
                                 code: PushStack[PushElement],
@@ -83,31 +88,127 @@ case class PushInterpreterState(exec: PushStack[PushElement],
                                 float: PushStack[Float],
                                 string: PushStack[String],
                                 boolean: PushStack[Boolean]) {
+
   /** Pushes an arbitrary literal onto the interpreter state. */
-  def pushLiteral(value: PushAtom[_]): PushInterpreterState = {
+  def pushElement(value: PushElement): PushInterpreterState = {
     value match {
-      case PushInt(i) => this.pushInt(i)
-      case PushFloat(f) => this.pushFloat(f)
-      case PushString(s) => this.pushString(s)
-      case PushBoolean(b) => this.pushBoolean(b)
+      case PushInt(i)         => this.pushInt(i)
+      case PushFloat(f)       => this.pushFloat(f)
+      case PushString(s)      => this.pushString(s)
+      case PushBoolean(b)     => this.pushBoolean(b)
+      case i: PushInstruction => this.pushExec(i)
+      case l: PushList        => this.pushExec(l)
+    }
+  }
+  /** Pushes an arbitrary literal onto the interpreter state. */
+  def pushElement(value: Option[PushElement]): PushInterpreterState = {
+    value.fold(this) {
+      case PushInt(i)         => this.pushInt(i)
+      case PushFloat(f)       => this.pushFloat(f)
+      case PushString(s)      => this.pushString(s)
+      case PushBoolean(b)     => this.pushBoolean(b)
+      case i: PushInstruction => this.pushExec(i)
+      case l: PushList        => this.pushExec(l)
     }
   }
 
-
   // There is a lot of code repetition here, as each stack needs an implementation
   // of each helper method. Downsides of a type system.
-  def pushExec(x: PushElement): PushInterpreterState = this.copy(exec = exec.push(x))
+  def pushExec(x: PushElement): PushInterpreterState =
+    this.copy(exec = exec.push(x))
 
   def popExec(): (Option[PushElement], PushInterpreterState) = {
     val (result, newStack) = exec.pop()
     (result, this.copy(exec = newStack))
   }
 
-  def pushCode(x: PushElement): PushInterpreterState = this.copy(code = code.push(x))
+  def pop2Exec(): (Option[(PushElement, PushElement)], PushInterpreterState) = {
+    val (result, newStack) = exec.pop2()
+    (result, this.copy(exec = newStack))
+  }
+
+  def mapExec(func: PushElement => PushElement): PushInterpreterState = {
+    val (boolean, newState) = this.popExec()
+    boolean.fold(this)(i => newState.pushExec(func(i)))
+  }
+
+  def mapExec(
+    func: (PushElement, PushElement) => PushElement
+  ): PushInterpreterState = {
+    val (booleans, newState) = this.pop2Exec()
+    booleans.fold(this) { case (i1, i2) => newState.pushExec(func(i1, i2)) }
+  }
+
+  def mapExecToAny(func: PushElement => PushElement): PushInterpreterState = {
+    val (boolean, newState) = this.popExec()
+    boolean.fold(this)(i => newState.pushExec(func(i)))
+  }
+
+  def mapExecToAny(
+    func: (PushElement, PushElement) => PushElement
+  ): PushInterpreterState = {
+    val (booleans, newState) = this.pop2Exec()
+    booleans.fold(this) { case (i1, i2) => newState.pushElement(func(i1, i2)) }
+  }
+
+  def pushCode(x: PushElement): PushInterpreterState =
+    this.copy(code = code.push(x))
 
   def popCode(): (Option[PushElement], PushInterpreterState) = {
     val (result, newStack) = code.pop()
     (result, this.copy(code = newStack))
+  }
+
+  def pop2Code(): (Option[(PushElement, PushElement)], PushInterpreterState) = {
+    val (result, newStack) = code.pop2()
+    (result, this.copy(exec = newStack))
+  }
+
+  def mapCode(func: PushElement => PushElement): PushInterpreterState = {
+    val (boolean, newState) = this.popCode()
+    boolean.fold(this)(i => newState.pushExec(func(i)))
+  }
+
+  def mapCode(
+    func: (PushElement, PushElement) => PushElement
+  ): PushInterpreterState = {
+    val (booleans, newState) = this.pop2Code()
+    booleans.fold(this) { case (i1, i2) => newState.pushCode(func(i1, i2)) }
+  }
+
+  def mapCodeList(func: PushList => PushElement): PushInterpreterState = {
+    val (code, newState) = this.popCode()
+    code.fold(this)({
+      case l: PushList => newState.pushElement(func(l))
+      case _           => this
+    })
+  }
+
+  def mapCodeNonEmptyList(
+    func: PushList => PushElement
+  ): PushInterpreterState = {
+    val (code, newState) = this.popCode()
+    code.fold(this)({
+      case l: PushList =>
+        if (l.isEmpty) {
+          this
+        } else {
+          newState.pushElement(func(l))
+        }
+      case _ => this
+    })
+  }
+
+  def mapCodeToAny(func: PushElement => PushElement): PushInterpreterState = {
+    val (boolean, newState) = this.popCode()
+    boolean.fold(this)(i => newState.pushCode(func(i)))
+  }
+
+  def mapCodeToAny(
+    func: (PushElement, PushElement) => PushElement
+  ): PushInterpreterState = {
+    val (booleans, newState) = this.pop2Code()
+    booleans.fold(this) { case (i1, i2) => newState.pushElement(func(i1, i2)) }
   }
 
   def pushInt(i: Int): PushInterpreterState = this.copy(int = int.push(i))
@@ -132,17 +233,18 @@ case class PushInterpreterState(exec: PushStack[PushElement],
     ints.fold(this) { case (i1, i2) => newState.pushInt(func(i1, i2)) }
   }
 
-  def mapIntToAny(func: Int => PushAtom[_]): PushInterpreterState = {
+  def mapIntToAny(func: Int => PushElement): PushInterpreterState = {
     val (int, newState) = this.popInt()
-    int.fold(this)(i => newState.pushLiteral(func(i)))
+    int.fold(this)(i => newState.pushElement(func(i)))
   }
 
-  def mapIntToAny(func: (Int, Int) => PushAtom[_]): PushInterpreterState = {
+  def mapIntToAny(func: (Int, Int) => PushElement): PushInterpreterState = {
     val (ints, newState) = this.pop2Ints()
-    ints.fold(this) { case (i1, i2) => newState.pushLiteral(func(i1, i2)) }
+    ints.fold(this) { case (i1, i2) => newState.pushElement(func(i1, i2)) }
   }
 
-  def pushFloat(f: Float): PushInterpreterState = this.copy(float = float.push(f))
+  def pushFloat(f: Float): PushInterpreterState =
+    this.copy(float = float.push(f))
 
   def popFloat(): (Option[Float], PushInterpreterState) = {
     val (result, newStack) = float.pop()
@@ -164,18 +266,20 @@ case class PushInterpreterState(exec: PushStack[PushElement],
     floats.fold(this) { case (i1, i2) => newState.pushFloat(func(i1, i2)) }
   }
 
-  def mapFloatToAny(func: Float => PushAtom[_]): PushInterpreterState = {
+  def mapFloatToAny(func: Float => PushElement): PushInterpreterState = {
     val (float, newState) = this.popFloat()
-    float.fold(this)(i => newState.pushLiteral(func(i)))
+    float.fold(this)(i => newState.pushElement(func(i)))
   }
 
-  def mapFloatToAny(func: (Float, Float) => PushAtom[_]): PushInterpreterState = {
+  def mapFloatToAny(
+    func: (Float, Float) => PushElement
+  ): PushInterpreterState = {
     val (floats, newState) = this.pop2Floats()
-    floats.fold(this) { case (i1, i2) => newState.pushLiteral(func(i1, i2)) }
+    floats.fold(this) { case (i1, i2) => newState.pushElement(func(i1, i2)) }
   }
 
-
-  def pushString(s: String): PushInterpreterState = this.copy(string = string.push(s))
+  def pushString(s: String): PushInterpreterState =
+    this.copy(string = string.push(s))
 
   def popString(): (Option[String], PushInterpreterState) = {
     val (result, newStack) = string.pop()
@@ -187,7 +291,6 @@ case class PushInterpreterState(exec: PushStack[PushElement],
     (result, this.copy(string = newStack))
   }
 
-
   def mapString(func: String => String): PushInterpreterState = {
     val (string, newState) = this.popString()
     string.fold(this)(i => newState.pushString(func(i)))
@@ -198,17 +301,20 @@ case class PushInterpreterState(exec: PushStack[PushElement],
     strings.fold(this) { case (i1, i2) => newState.pushString(func(i1, i2)) }
   }
 
-  def mapStringToAny(func: String => PushAtom[_]): PushInterpreterState = {
+  def mapStringToAny(func: String => PushElement): PushInterpreterState = {
     val (string, newState) = this.popString()
-    string.fold(this)(i => newState.pushLiteral(func(i)))
+    string.fold(this)(i => newState.pushElement(func(i)))
   }
 
-  def mapStringToAny(func: (String, String) => PushAtom[_]): PushInterpreterState = {
+  def mapStringToAny(
+    func: (String, String) => PushElement
+  ): PushInterpreterState = {
     val (strings, newState) = this.pop2Strings()
-    strings.fold(this) { case (i1, i2) => newState.pushLiteral(func(i1, i2)) }
+    strings.fold(this) { case (i1, i2) => newState.pushElement(func(i1, i2)) }
   }
 
-  def pushBoolean(b: Boolean): PushInterpreterState = this.copy(boolean = boolean.push(b))
+  def pushBoolean(b: Boolean): PushInterpreterState =
+    this.copy(boolean = boolean.push(b))
 
   def popBoolean(): (Option[Boolean], PushInterpreterState) = {
     val (result, newStack) = boolean.pop()
@@ -219,7 +325,6 @@ case class PushInterpreterState(exec: PushStack[PushElement],
     val (result, newStack) = boolean.pop2()
     (result, this.copy(boolean = newStack))
   }
-
 
   def mapBoolean(func: Boolean => Boolean): PushInterpreterState = {
     val (boolean, newState) = this.popBoolean()
@@ -233,16 +338,19 @@ case class PushInterpreterState(exec: PushStack[PushElement],
 
   def mapBooleanToAny(func: Boolean => PushAtom[_]): PushInterpreterState = {
     val (boolean, newState) = this.popBoolean()
-    boolean.fold(this)(i => newState.pushLiteral(func(i)))
+    boolean.fold(this)(i => newState.pushElement(func(i)))
   }
 
-  def mapBooleanToAny(func: (Boolean, Boolean) => PushAtom[_]): PushInterpreterState = {
+  def mapBooleanToAny(
+    func: (Boolean, Boolean) => PushAtom[_]
+  ): PushInterpreterState = {
     val (booleans, newState) = this.pop2Booleans()
-    booleans.fold(this) { case (i1, i2) => newState.pushLiteral(func(i1, i2)) }
+    booleans.fold(this) { case (i1, i2) => newState.pushElement(func(i1, i2)) }
   }
 }
 
 object PushInterpreterState {
+
   /**
     * @return The Push interpreter state corresponding to the given program
     */
@@ -295,7 +403,7 @@ case class PushStack[T](contents: List[T]) {
   def pop(): (Option[T], PushStack[T]) = {
     this.contents match {
       case t :: more => (Some(t), PushStack(more))
-      case Nil => (None, this)
+      case Nil       => (None, this)
     }
   }
 
@@ -304,7 +412,7 @@ case class PushStack[T](contents: List[T]) {
       case (Some(i1), newStack) =>
         newStack.pop() match {
           case (Some(i2), newStack2) => (Some(i1, i2), newStack2)
-          case _ => (None, this)
+          case _                     => (None, this)
         }
       case _ => (None, this)
     }

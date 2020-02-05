@@ -24,7 +24,7 @@ class PushParserTest extends FunSpec with Matchers {
     }
 
     it ("can parse instructions it knows about") {
-      PushParser.parse("boolean_not").get shouldBe List(Instruction.fromName("boolean_not").get)
+      PushParser.parse("boolean_not").get shouldBe List(PushInstruction.fromName("boolean_not").get)
     }
 
     it ("can't parse instructions it doesn't know about") {

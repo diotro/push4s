@@ -58,7 +58,7 @@ class PushInterpreterTest extends FunSpec with Matchers {
 
       it ("can handle instructions") {
         val before = PushInterpreter(
-          PushInterpreterState.empty.pushExec(Instruction.fromName("boolean_not").get))
+          PushInterpreterState.empty.pushExec(PushInstruction.fromName("boolean_not").get))
 
         val after = before.step()
         after.state shouldBe PushInterpreterState.empty
@@ -76,7 +76,7 @@ class PushInterpreterTest extends FunSpec with Matchers {
         val before = PushInterpreter(
           PushInterpreterState.empty
             .pushBoolean(true)
-            .pushExec(Instruction.fromName("boolean_not").get))
+            .pushExec(PushInstruction.fromName("boolean_not").get))
 
         val after = before.step()
         after.state.popExec()._1 shouldBe None

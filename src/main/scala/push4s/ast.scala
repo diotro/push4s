@@ -15,18 +15,18 @@ case class PushFloat(value: Float) extends PushAtom[Float]
 case class PushString(value: String) extends PushAtom[String]
 case class PushBoolean(value: Boolean) extends PushAtom[Boolean]
 
-
 /** Represents an instruction, referenced by name. Use Instructions.getDef(…) to retrieve
   * the actual function underlying this instruction.
   * @param name The name of this instruction.
   */
-case class Instruction (name: String) extends PushElement
+case class PushInstruction(name: String) extends PushElement
 
-object Instruction {
+object PushInstruction {
+
   /** @return The instruction with the given name, if there is one. */
-  def fromName(name: String): Option[Instruction] = {
-    if (Instruction.exists(name)) {
-      Some(Instruction(name))
+  def fromName(name: String): Option[PushInstruction] = {
+    if (PushInstruction.exists(name)) {
+      Some(PushInstruction(name))
     } else {
       None
     }
@@ -40,5 +40,26 @@ object Instruction {
 }
 
 /** A list contains is just a push program itself. */
-case class PushList(contents: PushProgram) extends PushElement
+case class PushList(contents: PushProgram) extends PushElement {
+  def isEmpty: Boolean = contents.isEmpty
+  def length: Int = contents.length
+}
+object PushList {
 
+  /**
+    * Produces a list from the two elements. If they are lists, combines them. If either or both
+    * are atoms, puts them in lists.
+    */
+  def from(e1: PushElement, e2: PushElement): PushList = {
+    val l1 = e1 match {
+      case l: PushList => l.contents
+      case _ => Seq(e1)
+    }
+    val l2 = e2 match {
+      case l: PushList => l.contents
+      case _ => Seq(e1)
+    }
+
+   PushList(l1 ++ l2)
+  }
+}
