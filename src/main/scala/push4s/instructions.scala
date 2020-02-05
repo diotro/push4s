@@ -7,60 +7,66 @@ import scala.util.Try
   * It has to be private, so that no one else can modify it - they can use Instructions to access
   * it's fields.
   */
-private object InstructionsMap {
-  var map: Map[String, InstructionDef] = List(
-  BooleanAnd,
-  BooleanOr,
-  BooleanNot,
-  BooleanXor,
-  BooleanFromInteger,
-  BooleanFromFloat,
-  IntegerAdd,
-  IntegerSub,
-  IntegerMult,
-  IntegerDiv,
-  IntegerMod,
-  IntegerFromBoolean,
-  IntegerFromString,
-  IntegerInc,
-  IntegerDec,
-  FloatAdd,
-  FloatSub,
-  FloatMult,
-  FloatDiv,
-  FloatMod,
-  FloatFromBoolean,
-  FloatFromString,
-  FloatInc,
-  FloatDec,
-  StringConcat,
-  StringTake,
-  StringLength,
-  StringReverse,
-  StringParseToChars,
-  StringContains,
-  StringReplace,
-  CodeAppend,
-  CodeAtom,
-  CodeCar,
-  CodeCdr,
-  CodeCons,
-  CodeDo,
-  CodeDoStarRange,
-  CodeDoStarCount,
-  CodeWrap,
-  CodeList,
-  CodeLength,
-  CodeNull
-  ).map(i => i.name -> i).toMap
-}
+private object InstructionsMap {}
 
 /** Used to get Instructions */
 object Instructions {
-  def getDef(i: PushInstruction): InstructionDef = InstructionsMap.map(i.name)
+  def getDef(i: PushInstruction): InstructionDef = instructionsMap(i.name)
 
   def containsDefinitionFor(name: String): Boolean =
-    InstructionsMap.map.contains(name)
+    instructionsMap.contains(name)
+
+  def randomInstruction(): InstructionDef = {
+    instructionsVector(util.Random.nextInt(instructionsVector.length))
+  }
+
+  private val instructionsVector: Vector[InstructionDef] = Vector(
+    BooleanAnd,
+    BooleanOr,
+    BooleanNot,
+    BooleanXor,
+    BooleanFromInteger,
+    BooleanFromFloat,
+    IntegerAdd,
+    IntegerSub,
+    IntegerMult,
+    IntegerDiv,
+    IntegerMod,
+    IntegerFromBoolean,
+    IntegerFromString,
+    IntegerInc,
+    IntegerDec,
+    FloatAdd,
+    FloatSub,
+    FloatMult,
+    FloatDiv,
+    FloatMod,
+    FloatFromBoolean,
+    FloatFromString,
+    FloatInc,
+    FloatDec,
+    StringConcat,
+    StringTake,
+    StringLength,
+    StringReverse,
+    StringParseToChars,
+    StringContains,
+    StringReplace,
+    CodeAppend,
+    CodeAtom,
+    CodeCar,
+    CodeCdr,
+    CodeCons,
+    CodeDo,
+    CodeDoStarRange,
+    CodeDoStarCount,
+    CodeWrap,
+    CodeList,
+    CodeLength,
+    CodeNull
+  )
+  private val instructionsMap: Map[String, InstructionDef] =
+    instructionsVector.map(i => i.name -> i).toMap
 }
 
 /** Defines an instruction. Instructions must have a name, which is used to reference them
@@ -301,7 +307,12 @@ object CodeLength
       CodeStack,
       _.mapCodeList(x => PushInt(x.length))
     )
-object CodeNull extends InstructionDef("code_null", CodeStack, _.mapCodeList(l => PushBoolean(l.length == 0)))
+object CodeNull
+    extends InstructionDef(
+      "code_null",
+      CodeStack,
+      _.mapCodeList(l => PushBoolean(l.length == 0))
+    )
 //object CodeExtract extends InstructionDef("code_extract", CodeStack, x => x)
 //object CodeInsert extends InstructionDef("code_insert", CodeStack, x => x)
 //object CodeSubst extends InstructionDef("code_subst", CodeStack, x => x)
