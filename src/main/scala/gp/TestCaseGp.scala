@@ -2,18 +2,19 @@ package gp
 
 import io.evvo.agent.{CreatorFunction, DeletorFunction, ModifierFunction}
 import io.evvo.builtin.deletors.DeleteDominated
+import io.evvo.island.population.Objective
 import push4s.{Benchmark, PushProgram}
 
 // TODO make these conditional on the stacks that are included in the benchmark
 // TODO add lexicase selection
 case class BenchmarkGP(benchmark: Benchmark) {
 
-  def creators(): Seq[CreatorFunction[PushProgram]] = {
-    Seq(CreateEmptyProgram())
+  def creators(): Vector[CreatorFunction[PushProgram]] = {
+    Vector(CreateEmptyProgram())
   }
 
-  def mutators(): Seq[ModifierFunction[PushProgram]] = {
-    Seq(
+  def mutators(): Vector[ModifierFunction[PushProgram]] = {
+    Vector(
       AddRandomInt(),
       IntAdd1(),
       IntSub1(),
@@ -32,7 +33,11 @@ case class BenchmarkGP(benchmark: Benchmark) {
     )
   }
 
-  def deletors(): Seq[DeletorFunction[PushProgram]] = {
-    Seq(DeleteDominated())
+  def deletors(): Vector[DeletorFunction[PushProgram]] = {
+    Vector(DeleteDominated())
+  }
+
+  def objectives(): Vector[Objective[PushProgram]] = {
+    benchmark.toObjectives().toVector
   }
 }

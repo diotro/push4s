@@ -193,8 +193,9 @@ object StringParseToChars
         state.popString() match {
           case (Some(str), newState) =>
             str.foldRight(newState)(
-              (char, stat) => stat.pushString(char.toString)
+              (char, stat) => state.pushString(char.toString)
             )
+          case _ => state
         }
       }
     )

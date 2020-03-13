@@ -11,7 +11,7 @@ import push4s._
 abstract class RandomAdder(override val name: String)
     extends MutatorFunction[PushProgram](name) {
   override protected def mutate(sol: PushProgram): PushProgram = {
-    val insertionPoint = util.Random.nextInt(sol.length)
+    val insertionPoint = util.Random.nextInt(math.max(sol.length, 1))
     val newValue = valueToAdd()
     val (left, right) = sol.splitAt(insertionPoint)
     left ++ (newValue +: right)
@@ -32,11 +32,14 @@ abstract class IntMapper(override val name: String, func: Int => Int)
     val pushInts = sol.zipWithIndex.collect {
       case (int: PushInt, index: Int) => (index, int)
     }
-
-    val chosen = pushInts(util.Random.nextInt(pushInts.length))
-    val index = chosen._1
-    val prevInt = chosen._2.value
-    sol.updated(index, PushInt(func(prevInt)))
+    if (pushInts.isEmpty) {
+      sol
+    } else {
+      val chosen = pushInts(util.Random.nextInt(math.max(1, pushInts.length)))
+      val index = chosen._1
+      val prevInt = chosen._2.value
+      sol.updated(index, PushInt(func(prevInt)))
+    }
   }
 }
 
@@ -52,10 +55,14 @@ abstract class StringMapper(override val name: String)
       case (str: PushString, index: Int) => (index, str)
     }
 
-    val chosen = pushStrings(util.Random.nextInt(pushStrings.length))
-    val index = chosen._1
-    val prevVal = chosen._2.value
-    sol.updated(index, PushString(func(prevVal)))
+    if (pushStrings.isEmpty) {
+      sol
+    } else {
+      val chosen = pushStrings(util.Random.nextInt(math.max(1, pushStrings.length)))
+      val index = chosen._1
+      val prevVal = chosen._2.value
+      sol.updated(index, PushString(func(prevVal)))
+    }
   }
 
   protected def func(s: String): String
@@ -71,7 +78,7 @@ case class AddRandomString(maxLength: Int = 25)
 
 case class AddRandomCharacter() extends StringMapper("AddRandomCharacter") {
   override def func(s: String): String = {
-    val insertionPoint = util.Random.nextInt(s.length)
+    val insertionPoint = util.Random.nextInt(math.max(1, s.length))
     val (left, right) = s.splitAt(insertionPoint)
     left ++ (util.Random.nextPrintableChar() +: right)
   }
@@ -89,7 +96,7 @@ case class AddRandomAsciiString(maxLength: Int = 50)
 case class RemoveRandomCharacter()
     extends StringMapper("RemoveRandomCharacter") {
   override def func(s: String): String = {
-    val deletionPoint = util.Random.nextInt(s.length - 1)
+    val deletionPoint = util.Random.nextInt(math.max(1, s.length - 1))
     val (left, right) = s.splitAt(deletionPoint)
     left ++ right.tail
   }
@@ -98,7 +105,7 @@ case class RemoveRandomCharacter()
 case class ChangeRandomCharacter()
     extends StringMapper("ChangeRandomCharacter") {
   override def func(s: String): String = {
-    val insertionPoint = util.Random.nextInt(s.length - 1)
+    val insertionPoint = util.Random.nextInt(math.max(1, s.length - 1))
     val (left, right) = s.splitAt(insertionPoint)
     left ++ (util.Random.nextPrintableChar() +: right.tail)
   }
@@ -116,7 +123,7 @@ case class FlipRandomBoolean()
       case (b: PushBoolean, index: Int) => (index, b)
     }
 
-    val chosen = bools(util.Random.nextInt(bools.length))
+    val chosen = bools(util.Random.nextInt(math.max(1, bools.length)))
     val index = chosen._1
     val prevVal = chosen._2.value
     sol.updated(index, PushBoolean(!prevVal))
@@ -132,7 +139,7 @@ case class AddRandomInstruction() extends RandomAdder("AddRandomInstruction") {
 case class RemoveRandomElement()
     extends MutatorFunction[PushProgram]("RemoveRandomElement") {
   override protected def mutate(sol: PushProgram): PushProgram = {
-    val insertionPoint = util.Random.nextInt(sol.length - 1)
+    val insertionPoint = util.Random.nextInt(math.max(sol.length - 1, 1))
     val (left, right) = sol.splitAt(insertionPoint)
     left ++ right.tail
   }
@@ -141,8 +148,8 @@ case class RemoveRandomElement()
 case class Crossover() extends CrossoverFunction[PushProgram]("Crossover") {
   override protected def crossover(sol1: PushProgram,
                                    sol2: PushProgram): PushProgram = {
-    val crossoverPoint1 = util.Random.nextInt(sol1.length)
-    val crossoverPoint2 = util.Random.nextInt(sol2.length)
+    val crossoverPoint1 = util.Random.nextInt(math.max(sol1.length, 1))
+    val crossoverPoint2 = util.Random.nextInt(math.max(sol2.length, 1))
     sol1.take(crossoverPoint1) ++ sol2.takeRight(crossoverPoint2)
   }
 }
