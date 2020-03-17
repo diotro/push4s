@@ -38,6 +38,6 @@ case class BenchmarkGP(benchmark: Benchmark) {
   }
 
   def objectives(): Vector[Objective[PushProgram]] = {
-    benchmark.toObjectives().toVector
+    benchmark.toObjectives.toVector
   }
 }

@@ -8,18 +8,24 @@ sealed trait PushElement
 /** A literal with a value of type T. */
 sealed trait PushAtom[T] extends PushElement {
   def value: T
+
+  override def toString: String = value.toString
 }
 
 case class PushInt(value: Int) extends PushAtom[Int]
 case class PushFloat(value: Float) extends PushAtom[Float]
-case class PushString(value: String) extends PushAtom[String]
+case class PushString(value: String) extends PushAtom[String] {
+  override def toString: String = f"'$value'"
+}
 case class PushBoolean(value: Boolean) extends PushAtom[Boolean]
 
 /** Represents an instruction, referenced by name. Use Instructions.getDef(…) to retrieve
   * the actual function underlying this instruction.
   * @param name The name of this instruction.
   */
-case class PushInstruction(name: String) extends PushElement
+case class PushInstruction(name: String) extends PushElement {
+  override def toString: String = name
+}
 
 object PushInstruction {
 
@@ -42,8 +48,12 @@ object PushInstruction {
 /** A list contains is just a push program itself. */
 case class PushList(contents: PushProgram) extends PushElement {
   def isEmpty: Boolean = contents.isEmpty
+
   def length: Int = contents.length
+
+  override def toString: String = f"( $contents )"
 }
+
 object PushList {
 
   /**

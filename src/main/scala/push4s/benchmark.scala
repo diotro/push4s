@@ -32,7 +32,7 @@ case class Benchmark(name: String,
   def toObjectives: Seq[Objective[PushProgram]] = {
     trainingTestCases.zipWithIndex.map {
       case (testCase, index) =>
-        new Objective[PushProgram](f"$name-Objective-$index", Minimize()) {
+        new Objective[PushProgram](f"$name-$index", Minimize()) {
           private val scorer = TestCaseObjective(testCase)
           override protected def objective(sol: PushProgram): Double = {
             scorer.score(sol).sum
