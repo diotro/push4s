@@ -10,7 +10,7 @@ spec:
       name: push
     spec:
       containers:
-        - name: push-container
+        - name: push
           image: push
           imagePullPolicy: IfNotPresent
       restartPolicy: OnFailure

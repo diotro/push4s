@@ -22,7 +22,7 @@ case class BenchmarkGP(benchmark: Benchmark) {
       HalveInt(),
       AddRandomString(),
       AddRandomAsciiString(),
-      AddRandomCharacter(),
+//      AddRandomCharacter(),
       RemoveRandomCharacter(),
       ChangeRandomCharacter(),
       AddRandomBoolean(),

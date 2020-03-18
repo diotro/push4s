@@ -30,15 +30,16 @@ case class Benchmark(name: String,
   }
 
   def toObjectives: Seq[Objective[PushProgram]] = {
-    trainingTestCases.zipWithIndex.map {
-      case (testCase, index) =>
-        new Objective[PushProgram](f"$name-$index", Minimize()) {
-          private val scorer = TestCaseObjective(testCase)
+    val bunchSize: Int = 20
+    trainingTestCases.grouped(bunchSize).zipWithIndex.map {
+      case (testCases, index) =>
+        new Objective[PushProgram](f"$name:$index-${index+bunchSize}", Minimize()) {
+          private val scorers = testCases.map(TestCaseObjective)
           override protected def objective(sol: PushProgram): Double = {
-            scorer.score(sol).sum
+            scorers.map(_.score(sol).sum).sum
           }
         }
-    }
+    }.toVector
   }
 
   /** Does that program pass this benchmark? That is, does it score "0" on each objective? */
