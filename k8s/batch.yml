@@ -3,8 +3,8 @@ kind: Job
 metadata:
   name: push-batch
 spec:
-  completions: 1
-#  parallelism: 1
+  completions: 4
+  parallelism: 4
   template:
     metadata:
       name: push
@@ -13,8 +13,8 @@ spec:
         - name: push
           image: gcr.io/personal-webite-241414/push:latest
           imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "4Gi"
+              cpu: "3"
       restartPolicy: OnFailure
-      resources:
-        requests:
-          memory: "4Gi"
-          cpu: "3"
