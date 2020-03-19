@@ -23,7 +23,9 @@ minikube start
 eval $(minikube docker-env)
 ```
 
+To rebuild the docker image for GCP:
 ```shell script
+sbt package &&
 docker build -t push . && \
 docker tag push gcr.io/personal-webite-241414/push && \
 docker push gcr.io/personal-webite-241414/push

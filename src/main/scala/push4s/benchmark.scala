@@ -33,7 +33,8 @@ case class Benchmark(name: String,
     val bunchSize: Int = 20
     trainingTestCases.grouped(bunchSize).zipWithIndex.map {
       case (testCases, index) =>
-        new Objective[PushProgram](f"$name:$index-${index+bunchSize}", Minimize()) {
+        val start = index * bunchSize
+        new Objective[PushProgram](f"$name:$start-${start+bunchSize}", Minimize()) {
           private val scorers = testCases.map(TestCaseObjective)
           override protected def objective(sol: PushProgram): Double = {
             scorers.map(_.score(sol).sum).sum
