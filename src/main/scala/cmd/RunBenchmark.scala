@@ -34,16 +34,16 @@ object RunBenchmark {
     )
 
     island.runBlocking(StopAfter(args(3).toInt.seconds))
-    println(island.currentParetoFrontier().toCsv())
-    println(island.currentParetoFrontier())
 
-    island
+    val sols: Vector[(Double, PushProgram)] = island
       .currentParetoFrontier()
       .solutions
-      .foreach(sol => {
-        redisClient.sadd("evvo::collatz_case", Vector(benchmark.evaluate(sol.solution).sum, sol.solution))
+      .toVector
+      .map(sol => {
+        (benchmark.evaluate(sol.solution).sum, sol.solution)
       })
-
+    redisClient.sadd("evvo::collatz_case", sols.head, sols.tail:_*)
+    redisClient.sadd("evvo::collatz_csv", island.currentParetoFrontier().toCsv())
     sys.exit(0)
   }
 }

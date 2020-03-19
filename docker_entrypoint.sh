@@ -1,3 +1,4 @@
 #!/usr/bin/env sh
+echo "RUNNING"
 export PATH=~/scala-$SCALA_VERSION/bin:$PATH
-scala -classpath evvo.jar push.jar benchmark.json localhost 6379 100
+scala -classpath evvo.jar push.jar benchmark.json redis 6379 3600

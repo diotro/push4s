@@ -22,3 +22,9 @@ You may want to use minikube:
 minikube start
 eval $(minikube docker-env)
 ```
+
+```shell script
+docker build -t push . && \
+docker tag push gcr.io/personal-webite-241414/push && \
+docker push gcr.io/personal-webite-241414/push
+```

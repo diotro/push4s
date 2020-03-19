@@ -34,7 +34,7 @@ case class BenchmarkGP(benchmark: Benchmark) {
   }
 
   def deletors(): Vector[DeletorFunction[PushProgram]] = {
-    Vector(DeleteDominated())
+    Vector.fill(10)(DeleteDominated())
   }
 
   def objectives(): Vector[Objective[PushProgram]] = {

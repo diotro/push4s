@@ -3,14 +3,18 @@ kind: Job
 metadata:
   name: push-batch
 spec:
-  completions: 3
-  parallelism: 3
+  completions: 1
+#  parallelism: 1
   template:
     metadata:
       name: push
     spec:
       containers:
         - name: push
-          image: push
-          imagePullPolicy: IfNotPresent
+          image: gcr.io/personal-webite-241414/push:latest
+          imagePullPolicy: Always
       restartPolicy: OnFailure
+      resources:
+        requests:
+          memory: "4Gi"
+          cpu: "3"
