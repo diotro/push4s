@@ -1,5 +1,7 @@
 package push4s
 
+import scala.util.Try
+
 /** A push interpreter, with a specific state.
   *
   * @param state The state of this push interpreter.
@@ -230,7 +232,7 @@ case class PushInterpreterState(exec: PushStack[PushElement],
 
   def mapInt(func: (Int, Int) => Int): PushInterpreterState = {
     val (ints, newState) = this.pop2Ints()
-    ints.fold(this) { case (i1, i2) => newState.pushInt(func(i1, i2)) }
+    ints.fold(this) { case (i1, i2) => Try{newState.pushInt(func(i1, i2))}.getOrElse(this) }
   }
 
   def mapIntToAny(func: Int => PushElement): PushInterpreterState = {

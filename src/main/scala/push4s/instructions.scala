@@ -112,6 +112,7 @@ object IntegerMult
     extends InstructionDef("integer_mult", IntStack, _.mapInt(_ * _))
 object IntegerDiv
     extends InstructionDef("integer_div", IntStack, _.mapInt(_ / _))
+
 object IntegerMod
     extends InstructionDef("integer_mod", IntStack, _.mapInt(_ % _))
 object IntegerFromBoolean

@@ -23,6 +23,11 @@ minikube start
 eval $(minikube docker-env)
 ```
 
+You may want to update Evvo, if you have a local version where you've done some development:
+```shell script
+./get_new_evvo.sh
+```
+
 To rebuild the docker image for GCP:
 ```shell script
 sbt package &&

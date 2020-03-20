@@ -141,17 +141,27 @@ case class FlipRandomBoolean()
 case class RemoveRandomElement()
     extends MutatorFunction[PushProgram]("RemoveRandomElement") {
   override protected def mutate(sol: PushProgram): PushProgram = {
-    val insertionPoint = util.Random.nextInt(math.max(sol.length - 1, 1))
-    val (left, right) = sol.splitAt(insertionPoint)
-    left ++ right.tail
+    if (sol.isEmpty) {
+      sol // nothing to remove
+    } else {
+      val insertionPoint = util.Random.nextInt(math.max(sol.length, 1))
+      val (left, right) = sol.splitAt(insertionPoint)
+      left ++ right.tail
+    }
   }
 }
 
 case class Crossover() extends CrossoverFunction[PushProgram]("Crossover") {
   override protected def crossover(sol1: PushProgram,
                                    sol2: PushProgram): PushProgram = {
-    val crossoverPoint1 = util.Random.nextInt(math.max(sol1.length, 1))
-    val crossoverPoint2 = util.Random.nextInt(math.max(sol2.length, 1))
-    sol1.take(crossoverPoint1) ++ sol2.takeRight(crossoverPoint2)
+    if (sol1.isEmpty) {
+      sol2
+    } else if (sol2.isEmpty) {
+      sol1
+    } else {
+      val crossoverPoint1 = util.Random.nextInt(sol1.length)
+      val crossoverPoint2 = util.Random.nextInt(sol2.length)
+      sol1.take(crossoverPoint1) ++ sol2.takeRight(crossoverPoint2)
+    }
   }
 }

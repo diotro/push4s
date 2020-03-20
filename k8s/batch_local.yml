@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: push-batch
+spec:
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      name: push
+    spec:
+      containers:
+        - name: push
+          image: push:latest
+          imagePullPolicy: Never
+      restartPolicy: OnFailure
