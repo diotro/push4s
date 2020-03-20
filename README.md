@@ -10,7 +10,8 @@ sbt package
 docker build -t push .
 kubectl apply -f ./k8s/redis-pod.yml
 kubectl apply -f ./k8s/redis-service.yml
-kubectl apply -f ./k8s/batch.yml
+kubectl apply -f ./k8s/batch.yml 
+# or kubectl apply -f ./k8s/batch_local.yml to use your local image 
 
 # To view the results
 kubectl exec -it redis-master sh

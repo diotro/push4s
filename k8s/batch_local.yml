@@ -11,6 +11,6 @@ spec:
     spec:
       containers:
         - name: push
-          image: push:latest
+          image: ;
           imagePullPolicy: Never
       restartPolicy: OnFailure

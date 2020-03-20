@@ -3,11 +3,7 @@ package cmd
 import com.redis.RedisClient
 import gp.BenchmarkGP
 import io.evvo.island._
-import io.evvo.migration.redis.{
-  RedisEmigrator,
-  RedisImmigrator,
-  RedisParetoFrontierRecorder
-}
+import io.evvo.migration.redis.{RedisEmigrator, RedisImmigrator, RedisParetoFrontierRecorder}
 import push4s.{BenchmarkLoader, PushProgram}
 
 import scala.concurrent.duration._
@@ -35,15 +31,17 @@ object RunBenchmark {
 
     island.runBlocking(StopAfter(args(3).toInt.seconds))
 
-    val sols: Vector[(Double, PushProgram)] = island
+    island
       .currentParetoFrontier()
       .solutions
       .toVector
-      .map(sol => {
-        (benchmark.evaluate(sol.solution).sum, sol.solution)
-      })
-    redisClient.sadd("evvo::collatz_case", sols.head, sols.tail:_*)
-    redisClient.sadd("evvo::collatz_csv", island.currentParetoFrontier().toCsv())
+      .map(sol => (benchmark.evaluate(sol.solution).sum, sol.solution).toString())
+      .foreach(redisClient.sadd("evvo::collatz_case", _))
+
+    redisClient.sadd(
+      "evvo::collatz_csv",
+      island.currentParetoFrontier().toCsv()
+    )
     sys.exit(0)
   }
 }

@@ -25,9 +25,11 @@
         <option value="gp.AddRandomIntTest" />
         <option value="gp.AddRandomStringTest" />
         <option value="gp.FlipRandomBooleanTest" />
+        <option value="gp.RemoveRandomElementTest" />
         <option value="gp.IntAdd1Test" />
         <option value="gp.AddRandomIntTest" />
         <option value="gp.FlipRandomBooleanTest" />
+        <option value="gp.RemoveRandomElementTest" />
         <option value="gp.AddRandomStringTest" />
       </list>
     </option>
