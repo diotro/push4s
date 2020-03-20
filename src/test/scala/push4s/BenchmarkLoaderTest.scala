@@ -5,10 +5,10 @@ import org.scalatest.{FunSpec, Matchers}
 class BenchmarkLoaderTest extends FunSpec with Matchers {
   describe("BenchmarkLoader") {
     it("can read benchmarks in files") {
-      val result = BenchmarkLoader.loadFromFile("src/main/resources/benchmark1.json")
-      assert(result.get.name == "benchmark1")
+      val result = BenchmarkLoader.loadFromFile("src/main/resources/collatz_benchmark.json")
+      assert(result.get.name == "collatz")
       assert(result.get.trainingTestCases.head ==
-        TestCase(Seq(PushInt(3), PushInt(4)), Seq(PushInt(7))))
+        TestCase(Seq(PushInt(1)), Seq(PushInt(1))))
     }
   }
 

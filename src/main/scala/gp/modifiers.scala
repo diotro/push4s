@@ -12,7 +12,7 @@ abstract class RandomAdder(override val name: String)
     extends MutatorFunction[PushProgram](name) {
   override protected def mutate(sol: PushProgram): PushProgram = {
     val insertionPoint = util.Random.nextInt(math.max(sol.length, 1))
-    val newValue = valueToAdd()
+    val newValue = this.valueToAdd()
     val (left, right) = sol.splitAt(insertionPoint)
     left ++ (newValue +: right)
   }
@@ -25,6 +25,25 @@ case class AddRandomInt() extends RandomAdder("AddRandomInt") {
     PushInt(util.Random.nextInt())
   }
 }
+
+case class AddRandomString(maxLength: Int = 25)
+    extends RandomAdder("AddRandomString") {
+  override protected def valueToAdd(): PushElement = {
+    val length = util.Random.nextInt(maxLength)
+    PushString(
+      Vector
+        .fill(length)(util.Random.nextPrintableChar())
+        .mkString("")
+    )
+  }
+}
+
+case class AddRandomInstruction() extends RandomAdder("AddRandomInstruction") {
+  override protected def valueToAdd(): PushElement = {
+    PushInstruction(Instructions.randomInstruction().name)
+  }
+}
+
 
 abstract class IntMapper(override val name: String, func: Int => Int)
     extends MutatorFunction[PushProgram](name) {
@@ -58,7 +77,9 @@ abstract class StringMapper(override val name: String)
     if (pushStrings.isEmpty) {
       sol
     } else {
-      val chosen = pushStrings(util.Random.nextInt(math.max(1, pushStrings.length)))
+      val chosen = pushStrings(
+        util.Random.nextInt(math.max(1, pushStrings.length))
+      )
       val index = chosen._1
       val prevVal = chosen._2.value
       sol.updated(index, PushString(func(prevVal)))
@@ -68,28 +89,11 @@ abstract class StringMapper(override val name: String)
   protected def func(s: String): String
 }
 
-case class AddRandomString(maxLength: Int = 25)
-    extends RandomAdder("AddRandomString") {
-  override protected def valueToAdd(): PushElement = {
-    val length = util.Random.nextInt(maxLength)
-    PushString(util.Random.nextString(length))
-  }
-}
-
 case class AddRandomCharacter() extends StringMapper("AddRandomCharacter") {
   override def func(s: String): String = {
     val insertionPoint = util.Random.nextInt(math.max(1, s.length))
     val (left, right) = s.splitAt(insertionPoint)
     left ++ (util.Random.nextPrintableChar() +: right)
-  }
-}
-
-case class AddRandomAsciiString(maxLength: Int = 50)
-    extends StringMapper("AddRandomAsciiString") {
-  override protected def func(s: String): String = {
-    val sb = new StringBuilder()
-    (1 to maxLength).foreach(_ => sb.addOne(util.Random.nextInt(256).toChar))
-    sb.toString()
   }
 }
 
@@ -123,16 +127,14 @@ case class FlipRandomBoolean()
       case (b: PushBoolean, index: Int) => (index, b)
     }
 
-    val chosen = bools(util.Random.nextInt(math.max(1, bools.length)))
-    val index = chosen._1
-    val prevVal = chosen._2.value
-    sol.updated(index, PushBoolean(!prevVal))
-  }
-}
-
-case class AddRandomInstruction() extends RandomAdder("AddRandomInstruction") {
-  override protected def valueToAdd(): PushElement = {
-    PushInstruction(Instructions.randomInstruction().name)
+    if (bools.isEmpty) {
+      sol
+    } else {
+      val chosen = bools(util.Random.nextInt(bools.length))
+      val index = chosen._1
+      val prevVal = chosen._2.value
+      sol.updated(index, PushBoolean(!prevVal))
+    }
   }
 }
 

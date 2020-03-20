@@ -13,14 +13,22 @@
         <option value="push4s.PushInterpreterTest" />
         <option value="push4s.TestCaseObjectiveTest" />
         <option value="push4s.PushInterpreterStateTest" />
-        <option value="push4s.TestCaseObjectiveTest" />
         <option value="push4s.BenchmarkLoaderTest" />
         <option value="push4s.PushInstructionTest" />
-        <option value="push4s.PushInterpreterTest" />
+        <option value="push4s.TestBenchmark" />
+        <option value="push4s.TestCaseObjectiveTest" />
+        <option value="push4s.PushParserTest" />
         <option value="push4s.PushStackTest" />
         <option value="push4s.PushInterpreterStateTest" />
-        <option value="push4s.TestBenchmark" />
-        <option value="push4s.PushParserTest" />
+        <option value="push4s.PushInterpreterTest" />
+        <option value="gp.IntAdd1Test" />
+        <option value="gp.AddRandomIntTest" />
+        <option value="gp.AddRandomStringTest" />
+        <option value="gp.FlipRandomBooleanTest" />
+        <option value="gp.IntAdd1Test" />
+        <option value="gp.AddRandomIntTest" />
+        <option value="gp.FlipRandomBooleanTest" />
+        <option value="gp.AddRandomStringTest" />
       </list>
     </option>
     <option name="envs">
