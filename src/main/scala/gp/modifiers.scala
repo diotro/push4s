@@ -146,7 +146,7 @@ case class RemoveRandomElement()
     } else {
       val insertionPoint = util.Random.nextInt(math.max(sol.length, 1))
       val (left, right) = sol.splitAt(insertionPoint)
-      left ++ right.tail
+      left ++ right.drop(1)
     }
   }
 }

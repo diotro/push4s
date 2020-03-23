@@ -11,6 +11,10 @@ class RemoveRandomElementTest extends FunSpec with Matchers {
       r.modify(Vector(population.Scored(Map(), Seq())))
     }
 
+    it ("should not throw exceptions on length-one programs") {
+      r.modify(Vector(population.Scored(Map(), Seq(PushInt(1)))))
+    }
+
     it("should remove a random element") {
       val out = r.modify(
         Vector.fill(100)(

@@ -3,8 +3,8 @@ kind: Job
 metadata:
   name: push-batch
 spec:
-  completions: 4
-  parallelism: 4
+  completions: 5
+  parallelism: 5
   template:
     metadata:
       name: push
@@ -15,6 +15,6 @@ spec:
           imagePullPolicy: Always
           resources:
             requests:
-              memory: "4Gi"
+              memory: "8Gi"
               cpu: "3"
       restartPolicy: OnFailure
