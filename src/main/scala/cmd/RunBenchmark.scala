@@ -7,6 +7,7 @@ import io.evvo.migration.redis.{RedisEmigrator, RedisImmigrator, RedisParetoFron
 import push4s.{BenchmarkLoader, PushProgram}
 
 import scala.concurrent.duration._
+import scala.util.Try
 
 object RunBenchmark {
   def main(args: Array[String]): Unit = {
@@ -25,7 +26,7 @@ object RunBenchmark {
       immigrator = new RedisImmigrator(redisClient),
       emigrationStrategy = RandomSampleEmigrationStrategy(16),
       emigrator = new RedisEmigrator(redisClient),
-      loggingStrategy = LogPopulationLoggingStrategy(),
+      loggingStrategy = LogPopulationLoggingStrategy(10.seconds),
       paretoFrontierRecorder = new RedisParetoFrontierRecorder(redisClient),
     )
 
@@ -35,8 +36,10 @@ object RunBenchmark {
       .currentParetoFrontier()
       .solutions
       .toVector
-      .map(sol => (benchmark.evaluate(sol.solution).sum, sol.solution).toString())
-      .foreach(redisClient.sadd("evvo::collatz_case", _))
+      .map(
+        sol => (benchmark.evaluate(sol.solution).sum, sol.solution).toString()
+      )
+      .foreach(x => Try { redisClient.sadd("evvo::collatz_case", x) })
 
     redisClient.sadd(
       "evvo::collatz_csv",

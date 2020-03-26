@@ -26,15 +26,16 @@ case class AddRandomInt() extends RandomAdder("AddRandomInt") {
   }
 }
 
-case class AddRandomString(maxLength: Int = 25)
-    extends RandomAdder("AddRandomString") {
+case class AddZero() extends RandomAdder("AddRandomInt") {
   override protected def valueToAdd(): PushElement = {
-    val length = util.Random.nextInt(maxLength)
-    PushString(
-      Vector
-        .fill(length)(util.Random.nextPrintableChar())
-        .mkString("")
-    )
+    PushInt(0)
+  }
+}
+
+case class AddEmptyString()
+    extends RandomAdder("AddEmptyString") {
+  override protected def valueToAdd(): PushElement = {
+    PushString("")
   }
 }
 
@@ -43,7 +44,6 @@ case class AddRandomInstruction() extends RandomAdder("AddRandomInstruction") {
     PushInstruction(Instructions.randomInstruction().name)
   }
 }
-
 
 abstract class IntMapper(override val name: String, func: Int => Int)
     extends MutatorFunction[PushProgram](name) {
@@ -151,6 +151,56 @@ case class RemoveRandomElement()
   }
 }
 
+case class MakeList() extends MutatorFunction[PushProgram]("MakeList") {
+  override protected def mutate(sol: PushProgram): PushProgram = {
+    if (sol.isEmpty) {
+      sol
+    } else {
+      val listStartPoint = util.Random.nextInt(math.max(sol.length, 1))
+      val listLength =
+        util.Random.nextInt(math.max(sol.length - listStartPoint, 1))
+      (sol.take(listStartPoint) :+ PushList(
+        sol.slice(listStartPoint, listStartPoint + listLength)
+      )) ++ sol.takeRight(sol.length - listLength - listStartPoint)
+    }
+  }
+}
+
+case class SwapOrder() extends MutatorFunction[PushProgram]("MakeList") {
+  override protected def mutate(sol: PushProgram): PushProgram = {
+    if (sol.isEmpty) {
+      sol
+    } else {
+      val i = util.Random.nextInt(sol.length)
+      val j = util.Random.nextInt(sol.length)
+      sol.updated(i, sol(j)).updated(j, sol(i))
+    }
+  }
+}
+
+case class RemoveList() extends MutatorFunction[PushProgram]("RemoveList") {
+  override protected def mutate(sol: PushProgram): PushProgram = {
+    if (sol.isEmpty) {
+      sol
+    } else {
+      val pushLists = sol.zipWithIndex.collect {
+        case (list: PushList, index: Int) => (index, list)
+      }
+
+      if (pushLists.isEmpty) {
+        sol
+      } else {
+        val chosen = pushLists(
+          util.Random.nextInt(math.max(1, pushLists.length))
+        )
+        val index = chosen._1
+        val list = chosen._2
+        sol.take(index) ++ list.contents ++ sol.drop(index + 1)
+      }
+    }
+  }
+}
+
 case class Crossover() extends CrossoverFunction[PushProgram]("Crossover") {
   override protected def crossover(sol1: PushProgram,
                                    sol2: PushProgram): PushProgram = {
@@ -163,5 +213,12 @@ case class Crossover() extends CrossoverFunction[PushProgram]("Crossover") {
       val crossoverPoint2 = util.Random.nextInt(sol2.length)
       sol1.take(crossoverPoint1) ++ sol2.takeRight(crossoverPoint2)
     }
+  }
+}
+
+case class Append() extends CrossoverFunction[PushProgram]("Append") {
+  override protected def crossover(sol1: PushProgram,
+                                   sol2: PushProgram): PushProgram = {
+    sol1 ++ sol2
   }
 }

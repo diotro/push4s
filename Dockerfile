@@ -6,7 +6,7 @@ WORKDIR /opt/docker/
 
 ADD target/scala-2.13/push4s_2.13-0.1.jar push.jar
 ADD lib/evvo_2.13-0.1.0-jar-with-dependencies.jar evvo.jar
-ADD src/main/resources/collatz_benchmark.json benchmark.json
+ADD src/main/resources/small-or-large.json benchmark.json
 
 # Install Scala
 #RUN touch /usr/lib/jvm/java-8-openjdk-amd64/release

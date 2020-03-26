@@ -51,7 +51,7 @@ case class PushList(contents: PushProgram) extends PushElement {
 
   def length: Int = contents.length
 
-  override def toString: String = f"( $contents )"
+  override def toString: String = f"( ${contents.mkString(" ")} )"
 }
 
 object PushList {

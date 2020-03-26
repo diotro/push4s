@@ -26,7 +26,7 @@ object Instructions {
     BooleanNot,
     BooleanXor,
     BooleanFromInteger,
-    BooleanFromFloat,
+//    BooleanFromFloat,
     IntegerAdd,
     IntegerSub,
     IntegerMult,
@@ -36,15 +36,16 @@ object Instructions {
     IntegerFromString,
     IntegerInc,
     IntegerDec,
-    FloatAdd,
-    FloatSub,
-    FloatMult,
-    FloatDiv,
-    FloatMod,
-    FloatFromBoolean,
-    FloatFromString,
-    FloatInc,
-    FloatDec,
+    IntegerLessThan,
+//    FloatAdd,
+//    FloatSub,
+//    FloatMult,
+//    FloatDiv,
+//    FloatMod,
+//    FloatFromBoolean,
+//    FloatFromString,
+//    FloatInc,
+//    FloatDec,
     StringConcat,
     StringTake,
     StringLength,
@@ -52,18 +53,19 @@ object Instructions {
     StringParseToChars,
     StringContains,
     StringReplace,
-    CodeAppend,
-    CodeAtom,
-    CodeCar,
-    CodeCdr,
-    CodeCons,
-    CodeDo,
-    CodeDoStarRange,
-    CodeDoStarCount,
-    CodeWrap,
-    CodeList,
-    CodeLength,
-    CodeNull
+//    CodeAppend,
+//    CodeAtom,
+//    CodeCar,
+//    CodeCdr,
+//    CodeCons,
+//    CodeDo,
+//    CodeDoStarRange,
+//    CodeDoStarCount,
+//    CodeWrap,
+//    CodeList,
+//    CodeLength,
+//    CodeNull,
+    ExecIf
   )
   private val instructionsMap: Map[String, InstructionDef] =
     instructionsVector.map(i => i.name -> i).toMap
@@ -95,13 +97,13 @@ object BooleanFromInteger
     extends InstructionDef(
       "boolean_frominteger",
       BooleanStack,
-      _.mapIntToAny(i => PushBoolean(if (i == 0) false else true))
+      _.mapIntToAny(i => PushBoolean(i == 0))
     )
 object BooleanFromFloat
     extends InstructionDef(
       "boolean_fromfloat",
       BooleanStack,
-      _.mapFloatToAny(i => PushBoolean(if (i == 0f) false else true))
+      _.mapFloatToAny(i => PushBoolean(i == 0f))
     )
 
 object IntegerAdd
@@ -129,6 +131,12 @@ object IntegerFromString
         Try {
           state.mapStringToAny(s => PushInt(s.toInt))
         }.getOrElse(state)
+    )
+object IntegerLessThan
+    extends InstructionDef(
+      "integer_lessthan",
+      IntStack,
+      _.mapIntToAny((n1, n2) => PushBoolean(n1 < n2))
     )
 object IntegerInc
     extends InstructionDef("integer_inc", IntStack, _.mapInt(_ + 1))
@@ -194,7 +202,7 @@ object StringParseToChars
         state.popString() match {
           case (Some(str), newState) =>
             str.foldRight(newState)(
-              (char, stat) => state.pushString(char.toString)
+              (char, state) => state.pushString(char.toString)
             )
           case _ => state
         }
@@ -327,3 +335,22 @@ object CodeNull
 //    extends InstructionDef("exec_do*range", ExecStack, x => x)
 //object ExecDoStarCount
 //    extends InstructionDef("exec_do*count", ExecStack, x => x)
+
+object ExecIf
+    extends InstructionDef(
+      "exec_if",
+      ExecStack,
+      state => {
+        val (bool, newState) = state.popBoolean()
+        bool.fold(state)(b => {
+          val (nextExec, nextState) = newState.pop2Exec()
+          nextExec.fold(state)(execPair => {
+            nextState.pushExec(if (b) {
+              execPair._1
+            } else {
+              execPair._2
+            })
+          })
+        })
+      }
+    )
