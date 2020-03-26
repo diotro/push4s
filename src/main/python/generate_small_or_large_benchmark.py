@@ -3,11 +3,11 @@ import random
 
 random.seed(8123789)
 
-with open("../resources/collatz-numbers-edge.json") as edge_fd:
+with open("../resources/small-or-large-edge.json") as edge_fd:
     edge_cases = json.load(edge_fd)[1:]
     # Throwing away the names of elements, read as pairs
 
-with open("../resources/collatz-numbers-random.json") as random_fd:
+with open("../resources/small-or-large-random.json") as random_fd:
     random_cases = json.load(random_fd)[1:]
     random.shuffle(random_cases)
 
@@ -22,11 +22,11 @@ def fix(case):
     return {"in": [case[0]], "out":  [case[1]]}
 
 out = {
-    "name": "collatz",
+    "name": "small-or-large",
     "trainingTestCases": [fix(x) for x in train_cases],
     "evaluationTestCases": [fix(x) for x in eval_cases],
-    "stacks": ["Boolean", "Integer"]
+    "stacks": ["Boolean", "Integer", "String"]
 }
 
-with open("../resources/collatz_benchmark.json", "w") as out_file:
+with open("../resources/small-or-large.json", "w") as out_file:
     json.dump(out, out_file)
